@@ -29,5 +29,6 @@
 	<modules>
 		<module>catalog-service</module>
 		<module>catalog-commands</module>
+		<module>catalog-rest-endpoint</module>
 	</modules>
 </project>
