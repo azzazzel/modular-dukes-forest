@@ -7,10 +7,10 @@
  */
 package com.forest.entity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,177 +27,162 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.forest.model.Group;
+import com.forest.model.Person;
+
 /**
- *
+ * 
  * @author ievans
  */
 @Entity
 @Table(name = "PERSON")
 @NamedQueries({
-    @NamedQuery(name = "Person.findAll", query = "SELECT p FROM PersonEntity p"),
-    @NamedQuery(name = "Person.findById", query = "SELECT p FROM PersonEntity p WHERE p.id = :id"),
-    @NamedQuery(name = "Person.findByFirstname", query = "SELECT p FROM PersonEntity p WHERE p.firstname = :firstname"),
-    @NamedQuery(name = "Person.findByLastname", query = "SELECT p FROM PersonEntity p WHERE p.lastname = :lastname"),
-    @NamedQuery(name = "Person.findByEmail", query = "SELECT p FROM PersonEntity p WHERE p.email = :email"),
-    @NamedQuery(name = "Person.findByAddress", query = "SELECT p FROM PersonEntity p WHERE p.address = :address"),
-    @NamedQuery(name = "Person.findByCity", query = "SELECT p FROM PersonEntity p WHERE p.city = :city")})
-public class PersonEntity implements Serializable {
-    
-    private static final long serialVersionUID = 6253057722726297688L;
-    @JoinTable(name = "PERSON_GROUPS", joinColumns = {
-        @JoinColumn(name = "EMAIL", referencedColumnName = "EMAIL")}, inverseJoinColumns = {
-        @JoinColumn(name = "GROUPS_ID", referencedColumnName = "ID")})
-    @ManyToMany
-    protected List<GroupsEntity> groupsList;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "ID")
-    protected Integer id;
-    @Basic(optional = false)
-    @Size(min=3, max=50, message="{person.firstname}")
-    @Column(name = "FIRSTNAME")
-    protected String firstname;
-    @Basic(optional = false)
-    @Size(min=3, max=100, message="{person.lastname}")
-    @Column(name = "LASTNAME")
-    protected String lastname;
-    @Pattern(regexp = ".+@.+\\.[a-z]+", message= "{person.email}")
-    @Size(min=3, max=45, message= "{person.email}")
-    @Basic(optional = false)
-    @Column(name = "EMAIL")
-    protected String email;
-    @Basic(optional = false)
-    @Size(min=3, max=45, message= "{person.address}")
-    @Column(name = "ADDRESS")
-    protected String address;
-    @Basic(optional = false)
-    @Size(min=3, max=45, message= "{person.city}")
-    @Column(name = "CITY")
-    protected String city;
-    @Basic(optional = false)
-    @Size(min=7, max=100, message= "{person.password}")
-    @Column(name = "PASSWORD")
-    protected String password;
+		@NamedQuery(name = "Person.findAll", query = "SELECT p FROM PersonEntity p"),
+		@NamedQuery(name = "Person.findById", query = "SELECT p FROM PersonEntity p WHERE p.id = :id"),
+		@NamedQuery(name = "Person.findByFirstname", query = "SELECT p FROM PersonEntity p WHERE p.firstname = :firstname"),
+		@NamedQuery(name = "Person.findByLastname", query = "SELECT p FROM PersonEntity p WHERE p.lastname = :lastname"),
+		@NamedQuery(name = "Person.findByEmail", query = "SELECT p FROM PersonEntity p WHERE p.email = :email"),
+		@NamedQuery(name = "Person.findByAddress", query = "SELECT p FROM PersonEntity p WHERE p.address = :address"),
+		@NamedQuery(name = "Person.findByCity", query = "SELECT p FROM PersonEntity p WHERE p.city = :city") })
+public class PersonEntity extends Person {
 
-    public PersonEntity() {
-        this.groupsList = new ArrayList<GroupsEntity>();
-    }
-    
-    public PersonEntity(Integer id) {
-        this.id = id;
-        this.groupsList = new ArrayList<GroupsEntity>();
-    }
-    
-    public PersonEntity(Integer id, 
-            String firstName, 
-            String lastName, 
-            String email, 
-            String address, 
-            String city) {
-        this.id = id;
-        this.firstname = firstName;
-        this.lastname = lastName;
-        this.email = email;
-        this.address = address;
-        this.city = city;
-        this.groupsList = new ArrayList<GroupsEntity>();
-    }
+	private static final long serialVersionUID = -6350453022856763936L;
 
-    public Integer getId() {
-        return id;
-    }
+	public PersonEntity() {
+		super();
+	}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public PersonEntity(Integer id) {
+		super(id);
+	}
 
-    public String getFirstname() {
-        return firstname;
-    }
+	public PersonEntity(Integer id, String firstName, String lastName,
+			String email, String address, String city) {
+		super(id, firstName, lastName, email, address, city);
+	}
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Basic(optional = false)
+	@Column(name = "ID")
+	public Integer getId() {
+		return id;
+	}
 
-    public String getLastname() {
-        return lastname;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
+	@Basic(optional = false)
+	@Size(min = 3, max = 50, message = "{person.firstname}")
+	@Column(name = "FIRSTNAME")
+	public String getFirstname() {
+		return firstname;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	@Basic(optional = false)
+	@Size(min = 3, max = 100, message = "{person.lastname}")
+	@Column(name = "LASTNAME")
+	public String getLastname() {
+		return lastname;
+	}
 
-    public String getAddress() {
-        return address;
-    }
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	@Pattern(regexp = ".+@.+\\.[a-z]+", message = "{person.email}")
+	@Size(min = 3, max = 45, message = "{person.email}")
+	@Basic(optional = false)
+	@Column(name = "EMAIL")
+	public String getEmail() {
+		return email;
+	}
 
-    public String getCity() {
-        return city;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public void setCity(String city) {
-        this.city = city;
-    }
+	@Basic(optional = false)
+	@Size(min = 3, max = 45, message = "{person.address}")
+	@Column(name = "ADDRESS")
+	public String getAddress() {
+		return address;
+	}
 
-    /**
-     * Add XmlTransient annotation to this field for security reasons. 
-     * @return the password
-     */
-    @XmlTransient  
-    public String getPassword() {
-        return password;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    /**
-     * @param password the password to set
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	@Basic(optional = false)
+	@Size(min = 3, max = 45, message = "{person.city}")
+	@Column(name = "CITY")
+	public String getCity() {
+		return city;
+	}
 
-    public List<GroupsEntity> getGroupsList() {
-        return groupsList;
-    }
+	public void setCity(String city) {
+		this.city = city;
+	}
 
-    public void setGroupsList(List<GroupsEntity> groupsList) {
-        this.groupsList = groupsList;
-    }
+	/**
+	 * Add XmlTransient annotation to this field for security reasons.
+	 * 
+	 * @return the password
+	 */
+	@XmlTransient
+	@Basic(optional = false)
+	@Size(min = 7, max = 100, message = "{person.password}")
+	@Column(name = "PASSWORD")
+	public String getPassword() {
+		return password;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
+	/**
+	 * @param password
+	 *            the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof PersonEntity)) {
-            return false;
-        }
-        PersonEntity other = (PersonEntity) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
+	@JoinTable(name = "PERSON_GROUPS", joinColumns = { @JoinColumn(name = "EMAIL", referencedColumnName = "EMAIL") }, inverseJoinColumns = { @JoinColumn(name = "GROUPS_ID", referencedColumnName = "ID") })
+	@ManyToMany(targetEntity=GroupsEntity.class)
+	public List<Group> getGroupsList() {
+		return groupsList;
+	}
 
-    @Override
-    public String toString() {
-        return "com.forest.entity.Person[ id=" + id + " ]";
-    }
+	public void setGroups(List<Group> groupsList) {
+		this.groupsList = groupsList;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (id != null ? id.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof PersonEntity)) {
+			return false;
+		}
+		PersonEntity other = (PersonEntity) object;
+		if ((this.id == null && other.id != null)
+				|| (this.id != null && !this.id.equals(other.id))) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "com.forest.entity.Person[ id=" + id + " ]";
+	}
 
 }

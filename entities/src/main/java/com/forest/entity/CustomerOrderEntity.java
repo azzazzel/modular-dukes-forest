@@ -7,13 +7,32 @@
  */
 package com.forest.entity;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
+
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.forest.model.Customer;
+import com.forest.model.CustomerOrder;
+import com.forest.model.OrderDetail;
+import com.forest.model.OrderStatus;
 
 /**
  *
@@ -30,37 +49,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CustomerOrder.findByAmount", query = "SELECT c FROM CustomerOrderEntity c WHERE c.amount = :amount"),
     @NamedQuery(name = "CustomerOrder.findByDateCreated", query = "SELECT c FROM CustomerOrderEntity c WHERE c.dateCreated = :dateCreated")})
 @XmlRootElement(name = "CustomerOrder")
-public class CustomerOrderEntity implements Serializable {
+public class CustomerOrderEntity extends CustomerOrder {
     
     private static final long serialVersionUID = 2705492120685275910L;
 
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "DATE_CREATED")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateCreated;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "ID")
-    private Integer id;
-    
-    @Basic(optional = false)
-    @DecimalMin(value="0.1", message="{c.order.amount}")
-    @Column(name = "AMOUNT")
-    private double amount;
-    
-    @JoinColumn(name = "STATUS_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private OrderStatusEntity orderStatus;
-    
-    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private CustomerEntity customer;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerOrder")
-    private List<OrderDetailEntity> orderDetailList;
 
     public CustomerOrderEntity() {
     }
@@ -75,6 +67,10 @@ public class CustomerOrderEntity implements Serializable {
         this.dateCreated = dateCreated;
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "ID")
     public Integer getId() {
         return id;
     }
@@ -83,6 +79,9 @@ public class CustomerOrderEntity implements Serializable {
         this.id = id;
     }
 
+    @Basic(optional = false)
+    @DecimalMin(value="0.1", message="{c.order.amount}")
+    @Column(name = "AMOUNT")
     public double getAmount() {
         return amount;
     }
@@ -91,6 +90,10 @@ public class CustomerOrderEntity implements Serializable {
         this.amount = amount;
     }
 
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "DATE_CREATED")
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getDateCreated() {
         return dateCreated;
     }
@@ -99,31 +102,32 @@ public class CustomerOrderEntity implements Serializable {
         this.dateCreated = dateCreated;
     }
 
-    public OrderStatusEntity getOrderStatus() {
+    @JoinColumn(name = "STATUS_ID", referencedColumnName = "ID")
+    @ManyToOne(targetEntity=OrderStatusEntity.class, optional = false)
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(OrderStatusEntity orderStatus) {
+    public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
-    public CustomerEntity getCustomer() {
+    @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID")
+    @ManyToOne(targetEntity=CustomerEntity.class, optional = false)
+    public Customer getCustomer() {
         return customer;
     }
 
-    public void setCustomer(CustomerEntity customer) {
+    public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
-    public void setCustomer(PersonEntity person) {
-        this.customer = (CustomerEntity) person;
-    }
-
-    public List<OrderDetailEntity> getOrderDetailList() {
+    @OneToMany(targetEntity=OrderDetailEntity.class, cascade = CascadeType.ALL, mappedBy = "customerOrder")
+    public List<OrderDetail> getOrderDetailList() {
         return orderDetailList;
     }
 
-    public void setOrderDetailList(List<OrderDetailEntity> orderDetailList) {
+    public void setOrderDetailList(List<OrderDetail> orderDetailList) {
         this.orderDetailList = orderDetailList;
     }
 

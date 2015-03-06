@@ -7,8 +7,8 @@
  */
 package com.forest.entity;
 
-import java.io.Serializable;
 import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,6 +23,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.forest.model.Group;
+import com.forest.model.Person;
+
 /**
  *
  * @author ievans
@@ -34,27 +37,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Groups.findById", query = "SELECT g FROM GroupsEntity g WHERE g.id = :id"),
     @NamedQuery(name = "Groups.findByName", query = "SELECT g FROM GroupsEntity g WHERE g.name = :name"),
     @NamedQuery(name = "Groups.findByDescription", query = "SELECT g FROM GroupsEntity g WHERE g.description = :description")})
-public class GroupsEntity implements Serializable {
+public class GroupsEntity extends Group {
     
     private static final long serialVersionUID = 1205082528194257031L;
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "ID")
-    private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50, message="{groups.name}")
-    @Column(name = "NAME")
-    private String name;
-    @Size(max = 300, message="{groups.description}")
-    @Column(name = "DESCRIPTION")
-    private String description;
-    @ManyToMany(mappedBy = "groupsList")
-    @XmlTransient
-    private List<PersonEntity> personList;
-
     public GroupsEntity() {
     }
 
@@ -67,6 +53,10 @@ public class GroupsEntity implements Serializable {
         this.name = name;
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "ID")
     public Integer getId() {
         return id;
     }
@@ -75,6 +65,10 @@ public class GroupsEntity implements Serializable {
         this.id = id;
     }
 
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50, message="{groups.name}")
+    @Column(name = "NAME")
     public String getName() {
         return name;
     }
@@ -83,6 +77,8 @@ public class GroupsEntity implements Serializable {
         this.name = name;
     }
 
+    @Size(max = 300, message="{groups.description}")
+    @Column(name = "DESCRIPTION")
     public String getDescription() {
         return description;
     }
@@ -92,11 +88,12 @@ public class GroupsEntity implements Serializable {
     }
     
     @XmlTransient
-    public List<PersonEntity> getPersonList() {
+    @ManyToMany(targetEntity=PersonEntity.class, mappedBy = "groupsList")
+    public List<Person> getPersonList() {
         return personList;
     }
 
-    public void setPersonList(List<PersonEntity> personList) {
+    public void setPersonList(List<Person> personList) {
         this.personList = personList;
     }
 

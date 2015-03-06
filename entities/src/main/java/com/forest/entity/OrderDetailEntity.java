@@ -7,7 +7,8 @@
  */
 package com.forest.entity;
 
-import java.io.Serializable;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -18,6 +19,10 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
+
+import com.forest.model.CustomerOrder;
+import com.forest.model.OrderDetail;
+import com.forest.model.Product;
 
 /**
  *
@@ -30,22 +35,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "OrderDetail.findByOrderId", query = "SELECT o FROM OrderDetailEntity o WHERE o.orderDetailPK.orderId = :orderId"),
     @NamedQuery(name = "OrderDetail.findByProductId", query = "SELECT o FROM OrderDetailEntity o WHERE o.orderDetailPK.productId = :productId"),
     @NamedQuery(name = "OrderDetail.findByQty", query = "SELECT o FROM OrderDetailEntity o WHERE o.qty = :qty")})
-public class OrderDetailEntity implements Serializable {
+public class OrderDetailEntity extends OrderDetail {
     
     private static final long serialVersionUID = 5604812482204021100L;
-
-    @EmbeddedId
-    protected OrderDetailPKEntity orderDetailPK;
-    @Basic(optional = false)
-    @Column(name = "QTY")
-    private int qty;
-    @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private ProductEntity product;
-
-    @JoinColumn(name = "ORDER_ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private CustomerOrderEntity customerOrder;
 
     public OrderDetailEntity() {
     }
@@ -63,14 +55,18 @@ public class OrderDetailEntity implements Serializable {
         this.orderDetailPK = new OrderDetailPKEntity(orderId, productId);
     }
 
+    @EmbeddedId
+    @Access(AccessType.FIELD)
     public OrderDetailPKEntity getOrderDetailPK() {
-        return orderDetailPK;
+        return (OrderDetailPKEntity)orderDetailPK;
     }
 
     public void setOrderDetailPK(OrderDetailPKEntity orderDetailPK) {
         this.orderDetailPK = orderDetailPK;
     }
 
+    @Basic(optional = false)
+    @Column(name = "QTY")
     public int getQty() {
         return qty;
     }
@@ -79,7 +75,9 @@ public class OrderDetailEntity implements Serializable {
         this.qty = qty;
     }
 
-    public ProductEntity getProduct() {
+    @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne(targetEntity=ProductEntity.class, optional = false)
+    public Product getProduct() {
         return product;
     }
 
@@ -87,8 +85,10 @@ public class OrderDetailEntity implements Serializable {
         this.product = product;
     }
     
+    @JoinColumn(name = "ORDER_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @ManyToOne(targetEntity=CustomerOrderEntity.class, optional = false)
     @XmlTransient
-    public CustomerOrderEntity getCustomerOrder() {
+    public CustomerOrder getCustomerOrder() {
         return customerOrder;
     }
 

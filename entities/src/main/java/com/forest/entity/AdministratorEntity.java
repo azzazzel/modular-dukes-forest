@@ -8,21 +8,38 @@
 package com.forest.entity;
 
 import java.util.ArrayList;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+import com.forest.model.Administrator;
+import com.forest.model.Group;
 
 /**
  *
  * @author ievans
  */
 @Entity
-public class AdministratorEntity extends PersonEntity {
+public class AdministratorEntity extends Administrator {
     
-    private static final long serialVersionUID = 7261229187771153310L;
+	private static final long serialVersionUID = 8632243395595186591L;
 
-    public AdministratorEntity() {
-        this.groupsList = new ArrayList<GroupsEntity>();
+	public AdministratorEntity() {
+        this.groupsList = new ArrayList<Group>();
     }
     
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Basic(optional = false)
+	@Column(name = "ID")
+	public Integer getId() {
+		return id;
+	}
+	
     @Override
     public int hashCode() {
         int hash = 0;

@@ -7,8 +7,8 @@
  */
 package com.forest.entity;
 
-import java.io.Serializable;
 import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,6 +23,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.forest.model.Category;
+import com.forest.model.Product;
+
 /**
  *
  * @author markito
@@ -34,24 +37,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Category.findById", query = "SELECT c FROM CategoryEntity c WHERE c.id = :id"),
     @NamedQuery(name = "Category.findByName", query = "SELECT c FROM CategoryEntity c WHERE c.name = :name"),
     @NamedQuery(name = "Category.findByTags", query = "SELECT c FROM CategoryEntity c WHERE c.tags = :tags")})
-public class CategoryEntity implements Serializable {
+public class CategoryEntity extends Category {
     
     private static final long serialVersionUID = -5400424750505982222L;
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "ID")
-    private Integer id;
-    @Basic(optional = false)
-    @Size(min=3, max=45, message="{category.name}")
-    @Column(name = "NAME", nullable = false, length = 45)
-    private String name;
-    @Size(min=3, max=45, message="{category.tags}")
-    @Column(name = "TAGS", length = 45)
-    private String tags;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
-    private List<ProductEntity> productList;
 
     public CategoryEntity() {
     }
@@ -65,6 +53,10 @@ public class CategoryEntity implements Serializable {
         this.name = name;
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "ID")
     public Integer getId() {
         return id;
     }
@@ -73,6 +65,9 @@ public class CategoryEntity implements Serializable {
         this.id = id;
     }
 
+    @Basic(optional = false)
+    @Size(min=3, max=45, message="{category.name}")
+    @Column(name = "NAME", nullable = false, length = 45)
     public String getName() {
         return name;
     }
@@ -81,6 +76,8 @@ public class CategoryEntity implements Serializable {
         this.name = name;
     }
 
+    @Size(min=3, max=45, message="{category.tags}")
+    @Column(name = "TAGS", length = 45)
     public String getTags() {
         return tags;
     }
@@ -90,11 +87,12 @@ public class CategoryEntity implements Serializable {
     }
     
     @XmlTransient
-    public List<ProductEntity> getProductList() {
+    @OneToMany(targetEntity=ProductEntity.class, cascade = CascadeType.ALL, mappedBy = "category")
+    public List<Product> getProductList() {
         return productList;
     }
 
-    public void setProductList(List<ProductEntity> productList) {
+    public void setProductList(List<Product> productList) {
         this.productList = productList;
     }
 

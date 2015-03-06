@@ -7,78 +7,78 @@
  */
 package com.forest.entity;
 
-import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import com.forest.model.OrderDetailPK;
+
 /**
- *
+ * 
  * @author markito
  */
 @Embeddable
-public class OrderDetailPKEntity implements Serializable {
-    
-    private static final long serialVersionUID = -1381453765352891148L;
-    
-    @Basic(optional = false)
-    @Column(name = "ORDER_ID")
-    private int orderId;
-    @Basic(optional = false)
-    @Column(name = "PRODUCT_ID")
-    private int productId;
+public class OrderDetailPKEntity extends OrderDetailPK {
 
-    public OrderDetailPKEntity() {
-    }
+	private static final long serialVersionUID = -1381453765352891148L;
 
-    public OrderDetailPKEntity(int orderId, int productId) {
-        this.orderId = orderId;
-        this.productId = productId;
-    }
+	public OrderDetailPKEntity() {
+	}
 
-    public int getOrderId() {
-        return orderId;
-    }
+	public OrderDetailPKEntity(int orderId, int productId) {
+		this.orderId = orderId;
+		this.productId = productId;
+	}
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
-    }
+	@Basic(optional = false)
+	@Column(name = "ORDER_ID")
+	public int getOrderId() {
+		return orderId;
+	}
 
-    public int getProductId() {
-        return productId;
-    }
+	public void setOrderId(int orderId) {
+		this.orderId = orderId;
+	}
 
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
+	@Basic(optional = false)
+	@Column(name = "PRODUCT_ID")
+	public int getProductId() {
+		return productId;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (int) orderId;
-        hash += (int) productId;
-        return hash;
-    }
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof OrderDetailPKEntity)) {
-            return false;
-        }
-        OrderDetailPKEntity other = (OrderDetailPKEntity) object;
-        if (this.orderId != other.orderId) {
-            return false;
-        }
-        if (this.productId != other.productId) {
-            return false;
-        }
-        return true;
-    }
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (int) orderId;
+		hash += (int) productId;
+		return hash;
+	}
 
-    @Override
-    public String toString() {
-        return "com.forest.entity.OrderDetailPK[orderId=" + orderId + ", productId=" + productId + "]";
-    }
+	@Override
+	public boolean equals(Object object) {
+		// TODO: Warning - this method won't work in the case the id fields are
+		// not set
+		if (!(object instanceof OrderDetailPKEntity)) {
+			return false;
+		}
+		OrderDetailPKEntity other = (OrderDetailPKEntity) object;
+		if (this.orderId != other.orderId) {
+			return false;
+		}
+		if (this.productId != other.productId) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "com.forest.entity.OrderDetailPK[orderId=" + orderId
+				+ ", productId=" + productId + "]";
+	}
 
 }

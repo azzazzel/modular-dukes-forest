@@ -7,8 +7,8 @@
  */
 package com.forest.entity;
 
-import java.io.Serializable;
 import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,6 +23,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.forest.model.CustomerOrder;
+import com.forest.model.OrderStatus;
+
 /**
  *
  * @author markito
@@ -33,27 +36,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "OrderStatus.findAll", query = "SELECT o FROM OrderStatusEntity o"),
     @NamedQuery(name = "OrderStatus.findById", query = "SELECT o FROM OrderStatusEntity o WHERE o.id = :id"),
     @NamedQuery(name = "OrderStatus.findByStatus", query = "SELECT o FROM OrderStatusEntity o WHERE o.status = :status")})
-public class OrderStatusEntity implements Serializable {
+public class OrderStatusEntity extends OrderStatus {
     
     private static final long serialVersionUID = 232654980834071737L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "ID")
-    private Integer id;
-    @Basic(optional = false)
-    @Column(name = "STATUS")
-    @Size(min=3, max=45, message="{order.status}")
-    private String status;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "orderStatus")
-    private List<CustomerOrderEntity> customerOrderList;
-    
-    @Basic(optional=true)
-    @Size(min=0, max=200, message="Description has maximum of 200 characters")
-    @Column(name= "DESCRIPTION")
-    private String description;
-    
     public OrderStatusEntity() {
     }
 
@@ -66,7 +52,11 @@ public class OrderStatusEntity implements Serializable {
         this.status = status;
     }
 
-    public Integer getId() {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "ID")
+   public Integer getId() {
         return id;
     }
 
@@ -74,6 +64,9 @@ public class OrderStatusEntity implements Serializable {
         this.id = id;
     }
 
+    @Basic(optional = false)
+    @Column(name = "STATUS")
+    @Size(min=3, max=45, message="{order.status}")
     public String getStatus() {
         return status;
     }
@@ -83,11 +76,12 @@ public class OrderStatusEntity implements Serializable {
     }
     
     @XmlTransient
-    public List<CustomerOrderEntity> getCustomerOrderList() {
+    @OneToMany(targetEntity=CustomerOrderEntity.class, cascade = CascadeType.ALL, mappedBy = "orderStatus")
+    public List<CustomerOrder> getCustomerOrderList() {
         return customerOrderList;
     }
 
-    public void setCustomerOrderList(List<CustomerOrderEntity> customerOrderList) {
+    public void setCustomerOrderList(List<CustomerOrder> customerOrderList) {
         this.customerOrderList = customerOrderList;
     }
 
@@ -116,16 +110,13 @@ public class OrderStatusEntity implements Serializable {
         return "com.forest.entity.OrderStatus[id=" + id + "]";
     }
 
-    /**
-     * @return the description
-     */
+    @Basic(optional=true)
+    @Size(min=0, max=200, message="Description has maximum of 200 characters")
+    @Column(name= "DESCRIPTION")
     public String getDescription() {
         return description;
     }
 
-    /**
-     * @param description the description to set
-     */
     public void setDescription(String description) {
         this.description = description;
     }
