@@ -74,6 +74,7 @@
 		<module>usecases</module>
 		<module>catalog-microservice</module>
 		<module>osgi</module>
+		<module>portlet</module>
 	</modules>
 
 

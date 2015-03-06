@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.glassfish.javaeetutorial</groupId>
+		<artifactId>portlet</artifactId>
+		<version>7.0.6-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>catalog-portlet</artifactId>
+	<name>Catalog portlet </name>
+	<packaging>bundle</packaging>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.glassfish.javaeetutorial</groupId>
+			<artifactId>usecases-catalog</artifactId>
+			<version>7.0.6-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.5.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Export-Package></Export-Package>
+						<Private-Package>com.forest.portlet.catalog</Private-Package>
+						<Import-Package>
+							javax.servlet,
+							javax.portlet;version=0.0.0,
+							com.forest.model,
+							*
+						</Import-Package>
+						<Include-Resource>
+							META-INF/resources=src/main/resources
+						</Include-Resource>
+						<Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+						<Require-Capability>
+							osgi.extender;filter:="(&amp;(osgi.extender=jsp.taglib)(uri=http://java.sun.com/portlet_2_0))",
+							osgi.extender;filter:="(&amp;(osgi.extender=jsp.taglib)(uri=http://liferay.com/tld/aui))",
+							osgi.extender;filter:="(&amp;(osgi.extender=jsp.taglib)(uri=http://liferay.com/tld/portlet))",
+							osgi.extender;filter:="(&amp;(osgi.extender=jsp.taglib)(uri=http://liferay.com/tld/theme))",
+							osgi.extender;filter:="(&amp;(osgi.extender=jsp.taglib)(uri=http://liferay.com/tld/ui))"
+						</Require-Capability>
+						<_dsannotations>*</_dsannotations>
+					</instructions>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
