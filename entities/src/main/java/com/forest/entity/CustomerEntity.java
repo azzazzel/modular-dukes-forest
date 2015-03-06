@@ -22,47 +22,47 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "Customer.findAll", query = "SELECT c FROM Customer c"),
-    @NamedQuery(name = "Customer.findById", query = "SELECT c FROM Customer c WHERE c.id = :id"),
-    @NamedQuery(name = "Customer.findByFirstname", query = "SELECT c FROM Customer c WHERE c.firstname = :firstname"),
-    @NamedQuery(name = "Customer.findByLastname", query = "SELECT c FROM Customer c WHERE c.lastname = :lastname"),
-    @NamedQuery(name = "Customer.findByEmail", query = "SELECT c FROM Customer c WHERE c.email = :email"),
-    @NamedQuery(name = "Customer.findByAddress", query = "SELECT c FROM Customer c WHERE c.address = :address"),
-    @NamedQuery(name = "Customer.findByCity", query = "SELECT c FROM Customer c WHERE c.city = :city")})
-public class Customer extends Person {
+    @NamedQuery(name = "Customer.findAll", query = "SELECT c FROM CustomerEntity c"),
+    @NamedQuery(name = "Customer.findById", query = "SELECT c FROM CustomerEntity c WHERE c.id = :id"),
+    @NamedQuery(name = "Customer.findByFirstname", query = "SELECT c FROM CustomerEntity c WHERE c.firstname = :firstname"),
+    @NamedQuery(name = "Customer.findByLastname", query = "SELECT c FROM CustomerEntity c WHERE c.lastname = :lastname"),
+    @NamedQuery(name = "Customer.findByEmail", query = "SELECT c FROM CustomerEntity c WHERE c.email = :email"),
+    @NamedQuery(name = "Customer.findByAddress", query = "SELECT c FROM CustomerEntity c WHERE c.address = :address"),
+    @NamedQuery(name = "Customer.findByCity", query = "SELECT c FROM CustomerEntity c WHERE c.city = :city")})
+public class CustomerEntity extends PersonEntity {
     
     private static final long serialVersionUID = -1964261708710396652L;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
-    private List<CustomerOrder> customerOrderList;
+    private List<CustomerOrderEntity> customerOrderList;
 
-    public Customer() {
-        this.customerOrderList = new ArrayList<CustomerOrder>();
-        this.groupsList = new ArrayList<Groups>();
+    public CustomerEntity() {
+        this.customerOrderList = new ArrayList<CustomerOrderEntity>();
+        this.groupsList = new ArrayList<GroupsEntity>();
     }
 
-    public Customer(Integer id) {
+    public CustomerEntity(Integer id) {
         this.id = id;
-        this.customerOrderList = new ArrayList<CustomerOrder>();
-        this.groupsList = new ArrayList<Groups>();
+        this.customerOrderList = new ArrayList<CustomerOrderEntity>();
+        this.groupsList = new ArrayList<GroupsEntity>();
     }
 
-    public Customer(Integer id, String firstname, String lastname, String email, String address, String city) {
+    public CustomerEntity(Integer id, String firstname, String lastname, String email, String address, String city) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.address = address;
         this.city = city;
-        this.customerOrderList = new ArrayList<CustomerOrder>();
-        this.groupsList = new ArrayList<Groups>();
+        this.customerOrderList = new ArrayList<CustomerOrderEntity>();
+        this.groupsList = new ArrayList<GroupsEntity>();
     }
     @XmlTransient
-    public List<CustomerOrder> getCustomerOrderList() {
+    public List<CustomerOrderEntity> getCustomerOrderList() {
         return customerOrderList;
     }
 
-    public void setCustomerOrderList(List<CustomerOrder> customerOrderList) {
+    public void setCustomerOrderList(List<CustomerOrderEntity> customerOrderList) {
         this.customerOrderList = customerOrderList;
     }
 
@@ -76,10 +76,10 @@ public class Customer extends Person {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Customer)) {
+        if (!(object instanceof CustomerEntity)) {
             return false;
         }
-        Customer other = (Customer) object;
+        CustomerEntity other = (CustomerEntity) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

@@ -7,7 +7,7 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.Groups;
+import com.forest.entity.GroupsEntity;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,7 +17,7 @@ import javax.persistence.PersistenceContext;
  * @author ievans
  */
 @Stateless
-public class GroupsBean extends AbstractFacade<Groups> {
+public class GroupsBean extends AbstractFacade<GroupsEntity> {
     @PersistenceContext(unitName = "forestPU")
     private EntityManager em;
 
@@ -27,7 +27,7 @@ public class GroupsBean extends AbstractFacade<Groups> {
     }
 
     public GroupsBean() {
-        super(Groups.class);
+        super(GroupsEntity.class);
     }
     
 }

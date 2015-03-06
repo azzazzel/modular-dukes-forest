@@ -8,7 +8,7 @@
 package com.forest.web;
 
 import com.forest.ejb.ProductBean;
-import com.forest.entity.Product;
+import com.forest.entity.ProductEntity;
 import com.forest.web.util.AbstractPaginationHelper;
 import com.forest.web.util.JsfUtil;
 import com.forest.web.util.PageNavigation;
@@ -38,7 +38,7 @@ public class ProductController implements Serializable {
     private final static Logger logger = Logger.getLogger(ProductController.class.getCanonicalName());
     private static final String BUNDLE = "bundles.Bundle";
     private static final long serialVersionUID = -1835103655519682074L;
-    private Product current;
+    private ProductEntity current;
     private DataModel items = null;
     @EJB
     private com.forest.ejb.ProductBean ejbFacade;
@@ -111,9 +111,9 @@ public class ProductController implements Serializable {
 
     }
 
-    public Product getSelected() {
+    public ProductEntity getSelected() {
         if (current == null) {
-            current = new Product();
+            current = new ProductEntity();
             selectedItemIndex = -1;
         }
 
@@ -170,18 +170,18 @@ public class ProductController implements Serializable {
         return PageNavigation.INDEX;
     }
 
-    public Product findById(int id) {
+    public ProductEntity findById(int id) {
         return ejbFacade.find(id);
     }
 
     public PageNavigation prepareView() {
-        current = (Product) getItems().getRowData();
+        current = (ProductEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.VIEW;
     }
 
     public PageNavigation prepareCreate() {
-        current = new Product();
+        current = new ProductEntity();
         selectedItemIndex = -1;
         setStep(1);
         return PageNavigation.CREATE;
@@ -208,7 +208,7 @@ public class ProductController implements Serializable {
     }
 
     public PageNavigation prepareEdit() {
-        current = (Product) getItems().getRowData();
+        current = (ProductEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
 
         return PageNavigation.EDIT;
@@ -229,7 +229,7 @@ public class ProductController implements Serializable {
     }
 
     public PageNavigation destroy() {
-        current = (Product) getItems().getRowData();
+        current = (ProductEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -333,7 +333,7 @@ public class ProductController implements Serializable {
         this.filePart = filePart;
     }
 
-    @FacesConverter(forClass = Product.class)
+    @FacesConverter(forClass = ProductEntity.class)
     public static class ProductControllerConverter implements Converter {
 
         @Override
@@ -363,8 +363,8 @@ public class ProductController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof Product) {
-                Product o = (Product) object;
+            if (object instanceof ProductEntity) {
+                ProductEntity o = (ProductEntity) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + ProductController.class.getName());

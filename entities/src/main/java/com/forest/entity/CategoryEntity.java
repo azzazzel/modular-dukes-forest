@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "CATEGORY")
 @NamedQueries({
-    @NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c"),
-    @NamedQuery(name = "Category.findById", query = "SELECT c FROM Category c WHERE c.id = :id"),
-    @NamedQuery(name = "Category.findByName", query = "SELECT c FROM Category c WHERE c.name = :name"),
-    @NamedQuery(name = "Category.findByTags", query = "SELECT c FROM Category c WHERE c.tags = :tags")})
-public class Category implements Serializable {
+    @NamedQuery(name = "Category.findAll", query = "SELECT c FROM CategoryEntity c"),
+    @NamedQuery(name = "Category.findById", query = "SELECT c FROM CategoryEntity c WHERE c.id = :id"),
+    @NamedQuery(name = "Category.findByName", query = "SELECT c FROM CategoryEntity c WHERE c.name = :name"),
+    @NamedQuery(name = "Category.findByTags", query = "SELECT c FROM CategoryEntity c WHERE c.tags = :tags")})
+public class CategoryEntity implements Serializable {
     
     private static final long serialVersionUID = -5400424750505982222L;
     
@@ -51,16 +51,16 @@ public class Category implements Serializable {
     @Column(name = "TAGS", length = 45)
     private String tags;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
-    private List<Product> productList;
+    private List<ProductEntity> productList;
 
-    public Category() {
+    public CategoryEntity() {
     }
 
-    public Category(Integer id) {
+    public CategoryEntity(Integer id) {
         this.id = id;
     }
 
-    public Category(Integer id, String name) {
+    public CategoryEntity(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -90,11 +90,11 @@ public class Category implements Serializable {
     }
     
     @XmlTransient
-    public List<Product> getProductList() {
+    public List<ProductEntity> getProductList() {
         return productList;
     }
 
-    public void setProductList(List<Product> productList) {
+    public void setProductList(List<ProductEntity> productList) {
         this.productList = productList;
     }
 
@@ -108,10 +108,10 @@ public class Category implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Category)) {
+        if (!(object instanceof CategoryEntity)) {
             return false;
         }
-        Category other = (Category) object;
+        CategoryEntity other = (CategoryEntity) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

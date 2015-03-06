@@ -7,7 +7,7 @@
  */
 package com.forest.shipment.ejb;
 
-import com.forest.entity.CustomerOrder;
+import com.forest.entity.CustomerOrderEntity;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class OrderBrowser {
     private Queue queue;
     private QueueBrowser browser;
 
-    public Map<String, CustomerOrder> getOrders() {
+    public Map<String, CustomerOrderEntity> getOrders() {
         browser = context.createBrowser(queue);
         Enumeration msgs;
         try {
@@ -43,12 +43,12 @@ public class OrderBrowser {
                 logger.log(Level.INFO, "No messages on the queue!");
             } else {
 
-                Map<String, CustomerOrder> result = new LinkedHashMap<>();
+                Map<String, CustomerOrderEntity> result = new LinkedHashMap<>();
                 while (msgs.hasMoreElements()) {
                     Message msg = (Message) msgs.nextElement();
 
                     logger.log(Level.INFO, "Message ID: {0}", msg.getJMSMessageID());
-                    CustomerOrder order = msg.getBody(CustomerOrder.class);
+                    CustomerOrderEntity order = msg.getBody(CustomerOrderEntity.class);
                     result.put(msg.getJMSMessageID(), order);
                 }
                 return result;
@@ -60,12 +60,12 @@ public class OrderBrowser {
         return null;
     }
 
-    public CustomerOrder processOrder(String OrderMessageID) {
+    public CustomerOrderEntity processOrder(String OrderMessageID) {
 
         logger.log(Level.INFO, "Processing Order {0}", OrderMessageID);
         JMSConsumer consumer = context.createConsumer(queue, "JMSMessageID='" + OrderMessageID + "'");
 
-        CustomerOrder order = consumer.receiveBody(CustomerOrder.class, 1);
+        CustomerOrderEntity order = consumer.receiveBody(CustomerOrderEntity.class, 1);
         return order;
     }
 }

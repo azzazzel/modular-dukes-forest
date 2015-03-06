@@ -12,7 +12,7 @@
 
 package com.forest.ejb;
 
-import com.forest.entity.Category;
+import com.forest.entity.CategoryEntity;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,7 +22,7 @@ import javax.persistence.PersistenceContext;
  * @author markito
  */
 @Stateless
-public class CategoryBean extends AbstractFacade<Category> {
+public class CategoryBean extends AbstractFacade<CategoryEntity> {
     @PersistenceContext(unitName="forestPU")
     private EntityManager em;
 
@@ -32,7 +32,7 @@ public class CategoryBean extends AbstractFacade<Category> {
     }
 
     public CategoryBean() {
-        super(Category.class);
+        super(CategoryEntity.class);
     }
 
 }

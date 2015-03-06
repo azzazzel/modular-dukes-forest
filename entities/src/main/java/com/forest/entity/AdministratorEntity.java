@@ -15,12 +15,12 @@ import javax.persistence.Entity;
  * @author ievans
  */
 @Entity
-public class Administrator extends Person {
+public class AdministratorEntity extends PersonEntity {
     
     private static final long serialVersionUID = 7261229187771153310L;
 
-    public Administrator() {
-        this.groupsList = new ArrayList<Groups>();
+    public AdministratorEntity() {
+        this.groupsList = new ArrayList<GroupsEntity>();
     }
     
     @Override
@@ -33,10 +33,10 @@ public class Administrator extends Person {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Administrator)) {
+        if (!(object instanceof AdministratorEntity)) {
             return false;
         }
-        Administrator other = (Administrator) object;
+        AdministratorEntity other = (AdministratorEntity) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

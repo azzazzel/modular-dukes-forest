@@ -22,15 +22,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "CUSTOMER_ORDER")
 @NamedQueries({
-    @NamedQuery(name = "CustomerOrder.findAll", query = "SELECT c FROM CustomerOrder c"),
-    @NamedQuery(name = "CustomerOrder.findById", query = "SELECT c FROM CustomerOrder c WHERE c.id = :id"),
-    @NamedQuery(name = "CustomerOrder.findByStatus", query = "SELECT c FROM CustomerOrder c, OrderStatus s WHERE c.orderStatus = s and s.status = :status"),
-    @NamedQuery(name = "CustomerOrder.findByStatusId", query = "SELECT c FROM CustomerOrder c, OrderStatus s WHERE c.orderStatus = s and s.id = :id"),
-    @NamedQuery(name = "CustomerOrder.findByCustomerId", query = "SELECT c FROM CustomerOrder c WHERE c.customer.id = :id"),
-    @NamedQuery(name = "CustomerOrder.findByAmount", query = "SELECT c FROM CustomerOrder c WHERE c.amount = :amount"),
-    @NamedQuery(name = "CustomerOrder.findByDateCreated", query = "SELECT c FROM CustomerOrder c WHERE c.dateCreated = :dateCreated")})
+    @NamedQuery(name = "CustomerOrder.findAll", query = "SELECT c FROM CustomerOrderEntity c"),
+    @NamedQuery(name = "CustomerOrder.findById", query = "SELECT c FROM CustomerOrderEntity c WHERE c.id = :id"),
+    @NamedQuery(name = "CustomerOrder.findByStatus", query = "SELECT c FROM CustomerOrderEntity c, OrderStatusEntity s WHERE c.orderStatus = s and s.status = :status"),
+    @NamedQuery(name = "CustomerOrder.findByStatusId", query = "SELECT c FROM CustomerOrderEntity c, OrderStatusEntity s WHERE c.orderStatus = s and s.id = :id"),
+    @NamedQuery(name = "CustomerOrder.findByCustomerId", query = "SELECT c FROM CustomerOrderEntity c WHERE c.customer.id = :id"),
+    @NamedQuery(name = "CustomerOrder.findByAmount", query = "SELECT c FROM CustomerOrderEntity c WHERE c.amount = :amount"),
+    @NamedQuery(name = "CustomerOrder.findByDateCreated", query = "SELECT c FROM CustomerOrderEntity c WHERE c.dateCreated = :dateCreated")})
 @XmlRootElement(name = "CustomerOrder")
-public class CustomerOrder implements Serializable {
+public class CustomerOrderEntity implements Serializable {
     
     private static final long serialVersionUID = 2705492120685275910L;
 
@@ -53,23 +53,23 @@ public class CustomerOrder implements Serializable {
     
     @JoinColumn(name = "STATUS_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
-    private OrderStatus orderStatus;
+    private OrderStatusEntity orderStatus;
     
     @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
-    private Customer customer;
+    private CustomerEntity customer;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customerOrder")
-    private List<OrderDetail> orderDetailList;
+    private List<OrderDetailEntity> orderDetailList;
 
-    public CustomerOrder() {
+    public CustomerOrderEntity() {
     }
 
-    public CustomerOrder(Integer id) {
+    public CustomerOrderEntity(Integer id) {
         this.id = id;
     }
 
-    public CustomerOrder(Integer id, double amount, Date dateCreated) {
+    public CustomerOrderEntity(Integer id, double amount, Date dateCreated) {
         this.id = id;
         this.amount = amount;
         this.dateCreated = dateCreated;
@@ -99,31 +99,31 @@ public class CustomerOrder implements Serializable {
         this.dateCreated = dateCreated;
     }
 
-    public OrderStatus getOrderStatus() {
+    public OrderStatusEntity getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
+    public void setOrderStatus(OrderStatusEntity orderStatus) {
         this.orderStatus = orderStatus;
     }
 
-    public Customer getCustomer() {
+    public CustomerEntity getCustomer() {
         return customer;
     }
 
-    public void setCustomer(Customer customer) {
+    public void setCustomer(CustomerEntity customer) {
         this.customer = customer;
     }
 
-    public void setCustomer(Person person) {
-        this.customer = (Customer) person;
+    public void setCustomer(PersonEntity person) {
+        this.customer = (CustomerEntity) person;
     }
 
-    public List<OrderDetail> getOrderDetailList() {
+    public List<OrderDetailEntity> getOrderDetailList() {
         return orderDetailList;
     }
 
-    public void setOrderDetailList(List<OrderDetail> orderDetailList) {
+    public void setOrderDetailList(List<OrderDetailEntity> orderDetailList) {
         this.orderDetailList = orderDetailList;
     }
 
@@ -137,10 +137,10 @@ public class CustomerOrder implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CustomerOrder)) {
+        if (!(object instanceof CustomerOrderEntity)) {
             return false;
         }
-        CustomerOrder other = (CustomerOrder) object;
+        CustomerOrderEntity other = (CustomerOrderEntity) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

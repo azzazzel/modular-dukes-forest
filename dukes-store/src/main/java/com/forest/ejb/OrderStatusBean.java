@@ -12,7 +12,7 @@
 
 package com.forest.ejb;
 
-import com.forest.entity.OrderStatus;
+import com.forest.entity.OrderStatusEntity;
 import java.io.Serializable;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -24,7 +24,7 @@ import javax.persistence.Query;
  * @author markito
  */
 @Stateless
-public class OrderStatusBean extends AbstractFacade<OrderStatus> implements Serializable {
+public class OrderStatusBean extends AbstractFacade<OrderStatusEntity> implements Serializable {
     
     private static final long serialVersionUID = 5199196331433553237L;
     @PersistenceContext(unitName="forestPU")
@@ -36,15 +36,15 @@ public class OrderStatusBean extends AbstractFacade<OrderStatus> implements Seri
     }
 
     public OrderStatusBean() {
-        super(OrderStatus.class);
+        super(OrderStatusEntity.class);
     }
 
-    public OrderStatus getStatusByName(String status) {
+    public OrderStatusEntity getStatusByName(String status) {
         Query createNamedQuery = getEntityManager().createNamedQuery("OrderStatus.findByStatus");
 
         //SELECT o FROM OrderStatus o WHERE o.status = :status
         createNamedQuery.setParameter("status", status);
 
-        return (OrderStatus) createNamedQuery.getSingleResult();
+        return (OrderStatusEntity) createNamedQuery.getSingleResult();
 }
     }

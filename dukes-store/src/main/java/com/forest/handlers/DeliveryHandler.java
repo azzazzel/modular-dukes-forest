@@ -9,7 +9,7 @@ package com.forest.handlers;
 
 import com.forest.ejb.OrderBean;
 import com.forest.ejb.OrderJMSManager;
-import com.forest.entity.CustomerOrder;
+import com.forest.entity.CustomerOrderEntity;
 import com.forest.events.OrderEvent;
 import com.forest.qualifiers.Paid;
 import java.io.Serializable;
@@ -45,7 +45,7 @@ public class DeliveryHandler implements IOrderHandler, Serializable {
             logger.log(Level.INFO, "Order #{0} has been paid in the amount of {1}. Order is now ready for delivery!", new Object[]{event.getOrderID(), event.getAmount()});
                                     
             orderBean.setOrderStatus(event.getOrderID(), String.valueOf(OrderBean.Status.READY_TO_SHIP.getStatus()));
-            CustomerOrder order = orderBean.getOrderById(event.getOrderID());
+            CustomerOrderEntity order = orderBean.getOrderById(event.getOrderID());
             if (order != null) {
                 orderPublisher.sendMessage(order);
                

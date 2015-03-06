@@ -35,9 +35,9 @@ public class ShoppingCart implements Serializable {
     OrderBean facade;
     @Inject
     @LoggedIn
-    Person user;
+    PersonEntity user;
     private static final Logger LOGGER = Logger.getLogger(ShoppingCart.class.getCanonicalName());
-    private List<Product> cartItems;
+    private List<ProductEntity> cartItems;
     @EJB
     EventDispatcherBean eventDispatcher;
 
@@ -45,7 +45,7 @@ public class ShoppingCart implements Serializable {
         cartItems = new ArrayList<>();
     }
 
-    public String addItem(final Product p) {
+    public String addItem(final ProductEntity p) {
 
         if (cartItems == null) {
             cartItems = new ArrayList<>();
@@ -64,7 +64,7 @@ public class ShoppingCart implements Serializable {
         return "";
     }
 
-    public boolean removeItem(Product p) {
+    public boolean removeItem(ProductEntity p) {
         if (cartItems.contains(p)) {
             return cartItems.remove(p);
         } else {
@@ -79,7 +79,7 @@ public class ShoppingCart implements Serializable {
         }
 
         double total = 0f;
-        for (Product item : cartItems) {
+        for (ProductEntity item : cartItems) {
             total += item.getPrice();
         }
 
@@ -97,7 +97,7 @@ public class ShoppingCart implements Serializable {
 
         } else {
 
-            for (Groups g : user.getGroupsList()) {
+            for (GroupsEntity g : user.getGroupsList()) {
                 if (g.getName().equals("ADMINS")) {
 
                     JsfUtil.addErrorMessage(JsfUtil.getStringFromBundle("bundles.Bundle", "AdministratorNotAllowed"));
@@ -105,10 +105,10 @@ public class ShoppingCart implements Serializable {
                 }
             }
 
-            CustomerOrder order = new CustomerOrder();
-            List<OrderDetail> details = new ArrayList<>();
+            CustomerOrderEntity order = new CustomerOrderEntity();
+            List<OrderDetailEntity> details = new ArrayList<>();
 
-            OrderStatus orderStatus = new OrderStatus();
+            OrderStatusEntity orderStatus = new OrderStatusEntity();
             orderStatus.setId(1); //by default the initial status
 
             order.setDateCreated(Calendar.getInstance().getTime());
@@ -118,10 +118,10 @@ public class ShoppingCart implements Serializable {
 
             facade.create(order);
 
-            for (Product p : getCartItems()) {
-                OrderDetail detail = new OrderDetail();
+            for (ProductEntity p : getCartItems()) {
+                OrderDetailEntity detail = new OrderDetailEntity();
 
-                OrderDetailPK pk = new OrderDetailPK(order.getId(), p.getId());
+                OrderDetailPKEntity pk = new OrderDetailPKEntity(order.getId(), p.getId());
                 //TODO: next version will handle qty on shoppingCart 
                 detail.setQty(1);
                 detail.setProduct(p);
@@ -151,7 +151,7 @@ public class ShoppingCart implements Serializable {
         cartItems.clear();
     }
 
-    public List<Product> getCartItems() {
+    public List<ProductEntity> getCartItems() {
         return cartItems;
     }
 
@@ -159,7 +159,7 @@ public class ShoppingCart implements Serializable {
         return conversation;
     }
 
-    private OrderEvent orderToEvent(CustomerOrder order) {
+    private OrderEvent orderToEvent(CustomerOrderEntity order) {
         OrderEvent event = new OrderEvent();
 
         event.setAmount(order.getAmount());

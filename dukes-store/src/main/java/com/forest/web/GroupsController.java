@@ -8,7 +8,7 @@
 package com.forest.web;
 
 import com.forest.ejb.GroupsBean;
-import com.forest.entity.Groups;
+import com.forest.entity.GroupsEntity;
 import com.forest.web.util.AbstractPaginationHelper;
 import com.forest.web.util.JsfUtil;
 import com.forest.web.util.PageNavigation;
@@ -32,7 +32,7 @@ public class GroupsController implements Serializable {
     private static final String BUNDLE = "bundles.Bundle";
     private static final long serialVersionUID = 915049365977089806L;
 
-    private Groups current;
+    private GroupsEntity current;
     private DataModel items = null;
     @EJB
     private com.forest.ejb.GroupsBean ejbFacade;
@@ -42,9 +42,9 @@ public class GroupsController implements Serializable {
     public GroupsController() {
     }
 
-    public Groups getSelected() {
+    public GroupsEntity getSelected() {
         if (current == null) {
-            current = new Groups();
+            current = new GroupsEntity();
             selectedItemIndex = -1;
         }
         return current;
@@ -79,13 +79,13 @@ public class GroupsController implements Serializable {
     }
 
     public PageNavigation prepareView() {
-        current = (Groups) getItems().getRowData();
+        current = (GroupsEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.VIEW;
     }
 
     public PageNavigation prepareCreate() {
-        current = new Groups();
+        current = new GroupsEntity();
         selectedItemIndex = -1;
         return PageNavigation.CREATE;
     }
@@ -102,7 +102,7 @@ public class GroupsController implements Serializable {
     }
 
     public PageNavigation prepareEdit() {
-        current = (Groups) getItems().getRowData();
+        current = (GroupsEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.EDIT;
     }
@@ -119,7 +119,7 @@ public class GroupsController implements Serializable {
     }
 
     public PageNavigation destroy() {
-        current = (Groups) getItems().getRowData();
+        current = (GroupsEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -194,7 +194,7 @@ public class GroupsController implements Serializable {
         return JsfUtil.getSelectItems(ejbFacade.findAll(), true);
     }
 
-    @FacesConverter(forClass = Groups.class)
+    @FacesConverter(forClass = GroupsEntity.class)
     public static class GroupsControllerConverter implements Converter {
 
         @Override
@@ -224,8 +224,8 @@ public class GroupsController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof Groups) {
-                Groups o = (Groups) object;
+            if (object instanceof GroupsEntity) {
+                GroupsEntity o = (GroupsEntity) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + GroupsController.class.getName());

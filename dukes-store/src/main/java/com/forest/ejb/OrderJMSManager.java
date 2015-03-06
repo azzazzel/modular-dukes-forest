@@ -7,7 +7,7 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.CustomerOrder;
+import com.forest.entity.CustomerOrderEntity;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
@@ -36,7 +36,7 @@ public class OrderJMSManager {
     private Queue queue;
     private QueueBrowser browser;
 
-    public void sendMessage(CustomerOrder customerOrder) {
+    public void sendMessage(CustomerOrderEntity customerOrder) {
         ObjectMessage msgObj = context.createObjectMessage();
 
         try {
@@ -53,7 +53,7 @@ public class OrderJMSManager {
         
         JMSConsumer consumer = context.createConsumer(queue, "OrderID='" + orderID + "'") ;
         
-        CustomerOrder order = consumer.receiveBody(CustomerOrder.class, 1);
+        CustomerOrderEntity order = consumer.receiveBody(CustomerOrderEntity.class, 1);
         
         if (order != null)
             logger.log(Level.INFO, "Order {0} removed from queue.", order.getId());

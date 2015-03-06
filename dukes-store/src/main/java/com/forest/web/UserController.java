@@ -7,8 +7,8 @@
  */
 package com.forest.web;
 
-import com.forest.entity.Groups;
-import com.forest.entity.Person;
+import com.forest.entity.GroupsEntity;
+import com.forest.entity.PersonEntity;
 import com.forest.qualifiers.LoggedIn;
 import com.forest.web.util.JsfUtil;
 import java.io.Serializable;
@@ -35,7 +35,7 @@ public class UserController implements Serializable {
     private static final String BUNDLE = "bundles.Bundle";
     private static final long serialVersionUID = -8851462237612818158L;
 
-    Person user;
+    PersonEntity user;
     @EJB
     private com.forest.ejb.UserBean ejbFacade;
     private String username;
@@ -113,7 +113,7 @@ public class UserController implements Serializable {
 
     public @Produces
     @LoggedIn
-    Person getAuthenticatedUser() {
+    PersonEntity getAuthenticatedUser() {
         return user;
     }
 
@@ -122,7 +122,7 @@ public class UserController implements Serializable {
     }
 
     public boolean isAdmin() {
-        for (Groups g : user.getGroupsList()) {
+        for (GroupsEntity g : user.getGroupsList()) {
             if (g.getName().equals("ADMINS")) {
                 return true;
             }
@@ -169,7 +169,7 @@ public class UserController implements Serializable {
     /**
      * @return the user
      */
-    public Person getUser() {
+    public PersonEntity getUser() {
         return user;
     }
 }

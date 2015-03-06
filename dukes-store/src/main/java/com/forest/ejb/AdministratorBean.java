@@ -7,8 +7,8 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.Administrator;
-import com.forest.entity.Groups;
+import com.forest.entity.AdministratorEntity;
+import com.forest.entity.GroupsEntity;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,7 +18,7 @@ import javax.persistence.PersistenceContext;
  * @author ievans
  */
 @Stateless
-public class AdministratorBean extends AbstractFacade<Administrator> {
+public class AdministratorBean extends AbstractFacade<AdministratorEntity> {
     @PersistenceContext(unitName = "forestPU")
     private EntityManager em;
 
@@ -28,12 +28,12 @@ public class AdministratorBean extends AbstractFacade<Administrator> {
     }
 
     public AdministratorBean() {
-        super(Administrator.class);
+        super(AdministratorEntity.class);
     }
     
     @Override
-    public void create(Administrator admin) {
-        Groups adminGroup = (Groups) em.createNamedQuery("Groups.findByName")
+    public void create(AdministratorEntity admin) {
+        GroupsEntity adminGroup = (GroupsEntity) em.createNamedQuery("Groups.findByName")
                 .setParameter("name", "Administrator")
                 .getSingleResult();
         admin.getGroupsList().add(adminGroup);
@@ -43,8 +43,8 @@ public class AdministratorBean extends AbstractFacade<Administrator> {
     }
     
     @Override
-    public void remove(Administrator admin) {
-        Groups adminGroup = (Groups) em.createNamedQuery("Groups.findByName")
+    public void remove(AdministratorEntity admin) {
+        GroupsEntity adminGroup = (GroupsEntity) em.createNamedQuery("Groups.findByName")
                 .setParameter("name", "Administrator")
                 .getSingleResult();
         adminGroup.getPersonList().remove(admin);

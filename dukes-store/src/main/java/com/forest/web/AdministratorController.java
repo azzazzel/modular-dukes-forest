@@ -8,7 +8,7 @@
 package com.forest.web;
 
 import com.forest.ejb.AdministratorBean;
-import com.forest.entity.Administrator;
+import com.forest.entity.AdministratorEntity;
 import com.forest.web.util.AbstractPaginationHelper;
 import com.forest.web.util.JsfUtil;
 import com.forest.web.util.PageNavigation;
@@ -32,7 +32,7 @@ public class AdministratorController implements Serializable {
     private static final String BUNDLE = "bundles.Bundle";
     private static final long serialVersionUID = -2691147357609941284L;
 
-    private Administrator current;
+    private AdministratorEntity current;
     private DataModel items = null;
     @EJB
     private com.forest.ejb.AdministratorBean ejbFacade;
@@ -43,9 +43,9 @@ public class AdministratorController implements Serializable {
     public AdministratorController() {
     }
 
-    public Administrator getSelected() {
+    public AdministratorEntity getSelected() {
         if (current == null) {
-            current = new Administrator();
+            current = new AdministratorEntity();
             selectedItemIndex = -1;
         }
         return current;
@@ -79,13 +79,13 @@ public class AdministratorController implements Serializable {
     }
 
     public PageNavigation prepareView() {
-        current = (Administrator) getItems().getRowData();
+        current = (AdministratorEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.VIEW;
     }
 
     public PageNavigation prepareCreate() {
-        current = new Administrator();
+        current = new AdministratorEntity();
         selectedItemIndex = -1;
         return PageNavigation.CREATE;
     }
@@ -102,7 +102,7 @@ public class AdministratorController implements Serializable {
     }
 
     public PageNavigation prepareEdit() {
-        current = (Administrator) getItems().getRowData();
+        current = (AdministratorEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.EDIT;
     }
@@ -119,7 +119,7 @@ public class AdministratorController implements Serializable {
     }
 
     public PageNavigation destroy() {
-        current = (Administrator) getItems().getRowData();
+        current = (AdministratorEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -194,7 +194,7 @@ public class AdministratorController implements Serializable {
         return JsfUtil.getSelectItems(ejbFacade.findAll(), true);
     }
 
-    @FacesConverter(forClass = Administrator.class)
+    @FacesConverter(forClass = AdministratorEntity.class)
     public static class AdministratorControllerConverter implements Converter {
 
         @Override
@@ -224,8 +224,8 @@ public class AdministratorController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof Administrator) {
-                Administrator o = (Administrator) object;
+            if (object instanceof AdministratorEntity) {
+                AdministratorEntity o = (AdministratorEntity) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + AdministratorController.class.getName());

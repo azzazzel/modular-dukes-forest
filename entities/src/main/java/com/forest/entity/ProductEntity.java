@@ -32,13 +32,13 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "PRODUCT")
 @NamedQueries({
-    @NamedQuery(name = "Product.findAll", query = "SELECT p FROM Product p"),
-    @NamedQuery(name = "Product.findById", query = "SELECT p FROM Product p WHERE p.id = :id"),
-    @NamedQuery(name = "Product.findByName", query = "SELECT p FROM Product p WHERE p.name = :name"),
-    @NamedQuery(name = "Product.findByPrice", query = "SELECT p FROM Product p WHERE p.price = :price"),
-    @NamedQuery(name = "Product.findByDescription", query = "SELECT p FROM Product p WHERE p.description = :description"),
-    @NamedQuery(name = "Product.findByImg", query = "SELECT p FROM Product p WHERE p.img = :img")})
-public class Product implements Serializable {
+    @NamedQuery(name = "Product.findAll", query = "SELECT p FROM ProductEntity p"),
+    @NamedQuery(name = "Product.findById", query = "SELECT p FROM ProductEntity p WHERE p.id = :id"),
+    @NamedQuery(name = "Product.findByName", query = "SELECT p FROM ProductEntity p WHERE p.name = :name"),
+    @NamedQuery(name = "Product.findByPrice", query = "SELECT p FROM ProductEntity p WHERE p.price = :price"),
+    @NamedQuery(name = "Product.findByDescription", query = "SELECT p FROM ProductEntity p WHERE p.description = :description"),
+    @NamedQuery(name = "Product.findByImg", query = "SELECT p FROM ProductEntity p WHERE p.img = :img")})
+public class ProductEntity implements Serializable {
     
     private static final long serialVersionUID = -9109112921000514199L;
 
@@ -69,16 +69,16 @@ public class Product implements Serializable {
     private byte[] imgSrc;
     @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false)
-    private Category category;
+    private CategoryEntity category;
 
-    public Product() {
+    public ProductEntity() {
     }
 
-    public Product(Integer id) {
+    public ProductEntity(Integer id) {
         this.id = id;
     }
 
-    public Product(Integer id, String name, double price, String description) {
+    public ProductEntity(Integer id, String name, double price, String description) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -134,11 +134,11 @@ public class Product implements Serializable {
         this.imgSrc = imgSrc;
     }
 
-    public Category getCategory() {
+    public CategoryEntity getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(CategoryEntity category) {
         this.category = category;
     }
 
@@ -152,10 +152,10 @@ public class Product implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Product)) {
+        if (!(object instanceof ProductEntity)) {
             return false;
         }
-        Product other = (Product) object;
+        ProductEntity other = (ProductEntity) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

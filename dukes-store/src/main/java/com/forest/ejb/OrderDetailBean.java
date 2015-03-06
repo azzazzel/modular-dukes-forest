@@ -7,7 +7,7 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.OrderDetail;
+import com.forest.entity.OrderDetailEntity;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -18,7 +18,7 @@ import javax.persistence.PersistenceContext;
  * @author markito
  */
 @Stateless
-public class OrderDetailBean extends AbstractFacade<OrderDetail> {
+public class OrderDetailBean extends AbstractFacade<OrderDetailEntity> {
     @PersistenceContext(unitName="forestPU")
     private EntityManager em;
 
@@ -28,7 +28,7 @@ public class OrderDetailBean extends AbstractFacade<OrderDetail> {
     }
 
     public OrderDetailBean() {
-        super(OrderDetail.class);
+        super(OrderDetailEntity.class);
     }
 
     /**
@@ -36,8 +36,8 @@ public class OrderDetailBean extends AbstractFacade<OrderDetail> {
      * @param orderId
      * @return 
      */
-    public List<OrderDetail> findOrderDetailByOrder(int orderId) {
-        List<OrderDetail> details = getEntityManager().createNamedQuery("OrderDetail.findByOrderId").setParameter("orderId", orderId).getResultList();
+    public List<OrderDetailEntity> findOrderDetailByOrder(int orderId) {
+        List<OrderDetailEntity> details = getEntityManager().createNamedQuery("OrderDetail.findByOrderId").setParameter("orderId", orderId).getResultList();
         
         return details;
     }

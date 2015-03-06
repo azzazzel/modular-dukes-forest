@@ -26,48 +26,48 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "ORDER_DETAIL")
 @NamedQueries({
-    @NamedQuery(name = "OrderDetail.findAll", query = "SELECT o FROM OrderDetail o"),
-    @NamedQuery(name = "OrderDetail.findByOrderId", query = "SELECT o FROM OrderDetail o WHERE o.orderDetailPK.orderId = :orderId"),
-    @NamedQuery(name = "OrderDetail.findByProductId", query = "SELECT o FROM OrderDetail o WHERE o.orderDetailPK.productId = :productId"),
-    @NamedQuery(name = "OrderDetail.findByQty", query = "SELECT o FROM OrderDetail o WHERE o.qty = :qty")})
-public class OrderDetail implements Serializable {
+    @NamedQuery(name = "OrderDetail.findAll", query = "SELECT o FROM OrderDetailEntity o"),
+    @NamedQuery(name = "OrderDetail.findByOrderId", query = "SELECT o FROM OrderDetailEntity o WHERE o.orderDetailPK.orderId = :orderId"),
+    @NamedQuery(name = "OrderDetail.findByProductId", query = "SELECT o FROM OrderDetailEntity o WHERE o.orderDetailPK.productId = :productId"),
+    @NamedQuery(name = "OrderDetail.findByQty", query = "SELECT o FROM OrderDetailEntity o WHERE o.qty = :qty")})
+public class OrderDetailEntity implements Serializable {
     
     private static final long serialVersionUID = 5604812482204021100L;
 
     @EmbeddedId
-    protected OrderDetailPK orderDetailPK;
+    protected OrderDetailPKEntity orderDetailPK;
     @Basic(optional = false)
     @Column(name = "QTY")
     private int qty;
     @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private Product product;
+    private ProductEntity product;
 
     @JoinColumn(name = "ORDER_ID", referencedColumnName = "ID", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private CustomerOrder customerOrder;
+    private CustomerOrderEntity customerOrder;
 
-    public OrderDetail() {
+    public OrderDetailEntity() {
     }
 
-    public OrderDetail(OrderDetailPK orderDetailPK) {
+    public OrderDetailEntity(OrderDetailPKEntity orderDetailPK) {
         this.orderDetailPK = orderDetailPK;
     }
 
-    public OrderDetail(OrderDetailPK orderDetailPK, int qty) {
+    public OrderDetailEntity(OrderDetailPKEntity orderDetailPK, int qty) {
         this.orderDetailPK = orderDetailPK;
         this.qty = qty;
     }
 
-    public OrderDetail(int orderId, int productId) {
-        this.orderDetailPK = new OrderDetailPK(orderId, productId);
+    public OrderDetailEntity(int orderId, int productId) {
+        this.orderDetailPK = new OrderDetailPKEntity(orderId, productId);
     }
 
-    public OrderDetailPK getOrderDetailPK() {
+    public OrderDetailPKEntity getOrderDetailPK() {
         return orderDetailPK;
     }
 
-    public void setOrderDetailPK(OrderDetailPK orderDetailPK) {
+    public void setOrderDetailPK(OrderDetailPKEntity orderDetailPK) {
         this.orderDetailPK = orderDetailPK;
     }
 
@@ -79,20 +79,20 @@ public class OrderDetail implements Serializable {
         this.qty = qty;
     }
 
-    public Product getProduct() {
+    public ProductEntity getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
+    public void setProduct(ProductEntity product) {
         this.product = product;
     }
     
     @XmlTransient
-    public CustomerOrder getCustomerOrder() {
+    public CustomerOrderEntity getCustomerOrder() {
         return customerOrder;
     }
 
-    public void setCustomerOrder(CustomerOrder customerOrder) {
+    public void setCustomerOrder(CustomerOrderEntity customerOrder) {
         this.customerOrder = customerOrder;
     }
 
@@ -106,10 +106,10 @@ public class OrderDetail implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof OrderDetail)) {
+        if (!(object instanceof OrderDetailEntity)) {
             return false;
         }
-        OrderDetail other = (OrderDetail) object;
+        OrderDetailEntity other = (OrderDetailEntity) object;
         if ((this.orderDetailPK == null && other.orderDetailPK != null) || (this.orderDetailPK != null && !this.orderDetailPK.equals(other.orderDetailPK))) {
             return false;
         }

@@ -7,8 +7,8 @@
  */
 package com.forest.shipment.web;
 
-import com.forest.entity.Groups;
-import com.forest.entity.Person;
+import com.forest.entity.GroupsEntity;
+import com.forest.entity.PersonEntity;
 import com.forest.qualifiers.LoggedIn;
 import com.forest.shipment.session.UserBean;
 import com.forest.shipment.web.util.JsfUtil;
@@ -39,7 +39,7 @@ public class UserController implements Serializable {
     @Inject
     ShippingBean adapter;
     
-    Person user;
+    PersonEntity user;
     @EJB
     private UserBean ejbFacade;
     private String username;
@@ -80,8 +80,8 @@ public class UserController implements Serializable {
         return result;
     }
     
-    public boolean isAdmin(Person user) {   
-        for (Groups g : user.getGroupsList()) {
+    public boolean isAdmin(PersonEntity user) {   
+        for (GroupsEntity g : user.getGroupsList()) {
                 if (g.getName().equals("ADMINS")) {
                     return true;
                 }
@@ -118,7 +118,7 @@ public class UserController implements Serializable {
 
     public @Produces
     @LoggedIn
-    Person getAuthenticatedUser() {
+    PersonEntity getAuthenticatedUser() {
         return user;
     }
 
@@ -157,7 +157,7 @@ public class UserController implements Serializable {
     /**
      * @return the user
      */
-    public Person getUser() {
+    public PersonEntity getUser() {
         return user;
     }
 }

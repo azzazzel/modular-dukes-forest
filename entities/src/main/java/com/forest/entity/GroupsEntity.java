@@ -30,11 +30,11 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "GROUPS")
 @NamedQueries({
-    @NamedQuery(name = "Groups.findAll", query = "SELECT g FROM Groups g"),
-    @NamedQuery(name = "Groups.findById", query = "SELECT g FROM Groups g WHERE g.id = :id"),
-    @NamedQuery(name = "Groups.findByName", query = "SELECT g FROM Groups g WHERE g.name = :name"),
-    @NamedQuery(name = "Groups.findByDescription", query = "SELECT g FROM Groups g WHERE g.description = :description")})
-public class Groups implements Serializable {
+    @NamedQuery(name = "Groups.findAll", query = "SELECT g FROM GroupsEntity g"),
+    @NamedQuery(name = "Groups.findById", query = "SELECT g FROM GroupsEntity g WHERE g.id = :id"),
+    @NamedQuery(name = "Groups.findByName", query = "SELECT g FROM GroupsEntity g WHERE g.name = :name"),
+    @NamedQuery(name = "Groups.findByDescription", query = "SELECT g FROM GroupsEntity g WHERE g.description = :description")})
+public class GroupsEntity implements Serializable {
     
     private static final long serialVersionUID = 1205082528194257031L;
     
@@ -53,16 +53,16 @@ public class Groups implements Serializable {
     private String description;
     @ManyToMany(mappedBy = "groupsList")
     @XmlTransient
-    private List<Person> personList;
+    private List<PersonEntity> personList;
 
-    public Groups() {
+    public GroupsEntity() {
     }
 
-    public Groups(Integer id) {
+    public GroupsEntity(Integer id) {
         this.id = id;
     }
 
-    public Groups(Integer id, String name) {
+    public GroupsEntity(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -92,11 +92,11 @@ public class Groups implements Serializable {
     }
     
     @XmlTransient
-    public List<Person> getPersonList() {
+    public List<PersonEntity> getPersonList() {
         return personList;
     }
 
-    public void setPersonList(List<Person> personList) {
+    public void setPersonList(List<PersonEntity> personList) {
         this.personList = personList;
     }
 
@@ -110,10 +110,10 @@ public class Groups implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Groups)) {
+        if (!(object instanceof GroupsEntity)) {
             return false;
         }
-        Groups other = (Groups) object;
+        GroupsEntity other = (GroupsEntity) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

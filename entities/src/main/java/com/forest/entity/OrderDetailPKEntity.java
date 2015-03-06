@@ -17,7 +17,7 @@ import javax.persistence.Embeddable;
  * @author markito
  */
 @Embeddable
-public class OrderDetailPK implements Serializable {
+public class OrderDetailPKEntity implements Serializable {
     
     private static final long serialVersionUID = -1381453765352891148L;
     
@@ -28,10 +28,10 @@ public class OrderDetailPK implements Serializable {
     @Column(name = "PRODUCT_ID")
     private int productId;
 
-    public OrderDetailPK() {
+    public OrderDetailPKEntity() {
     }
 
-    public OrderDetailPK(int orderId, int productId) {
+    public OrderDetailPKEntity(int orderId, int productId) {
         this.orderId = orderId;
         this.productId = productId;
     }
@@ -63,10 +63,10 @@ public class OrderDetailPK implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof OrderDetailPK)) {
+        if (!(object instanceof OrderDetailPKEntity)) {
             return false;
         }
-        OrderDetailPK other = (OrderDetailPK) object;
+        OrderDetailPKEntity other = (OrderDetailPKEntity) object;
         if (this.orderId != other.orderId) {
             return false;
         }

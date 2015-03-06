@@ -30,10 +30,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "ORDER_STATUS")
 @NamedQueries({
-    @NamedQuery(name = "OrderStatus.findAll", query = "SELECT o FROM OrderStatus o"),
-    @NamedQuery(name = "OrderStatus.findById", query = "SELECT o FROM OrderStatus o WHERE o.id = :id"),
-    @NamedQuery(name = "OrderStatus.findByStatus", query = "SELECT o FROM OrderStatus o WHERE o.status = :status")})
-public class OrderStatus implements Serializable {
+    @NamedQuery(name = "OrderStatus.findAll", query = "SELECT o FROM OrderStatusEntity o"),
+    @NamedQuery(name = "OrderStatus.findById", query = "SELECT o FROM OrderStatusEntity o WHERE o.id = :id"),
+    @NamedQuery(name = "OrderStatus.findByStatus", query = "SELECT o FROM OrderStatusEntity o WHERE o.status = :status")})
+public class OrderStatusEntity implements Serializable {
     
     private static final long serialVersionUID = 232654980834071737L;
 
@@ -47,21 +47,21 @@ public class OrderStatus implements Serializable {
     @Size(min=3, max=45, message="{order.status}")
     private String status;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "orderStatus")
-    private List<CustomerOrder> customerOrderList;
+    private List<CustomerOrderEntity> customerOrderList;
     
     @Basic(optional=true)
     @Size(min=0, max=200, message="Description has maximum of 200 characters")
     @Column(name= "DESCRIPTION")
     private String description;
     
-    public OrderStatus() {
+    public OrderStatusEntity() {
     }
 
-    public OrderStatus(Integer id) {
+    public OrderStatusEntity(Integer id) {
         this.id = id;
     }
 
-    public OrderStatus(Integer id, String status) {
+    public OrderStatusEntity(Integer id, String status) {
         this.id = id;
         this.status = status;
     }
@@ -83,11 +83,11 @@ public class OrderStatus implements Serializable {
     }
     
     @XmlTransient
-    public List<CustomerOrder> getCustomerOrderList() {
+    public List<CustomerOrderEntity> getCustomerOrderList() {
         return customerOrderList;
     }
 
-    public void setCustomerOrderList(List<CustomerOrder> customerOrderList) {
+    public void setCustomerOrderList(List<CustomerOrderEntity> customerOrderList) {
         this.customerOrderList = customerOrderList;
     }
 
@@ -101,10 +101,10 @@ public class OrderStatus implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof OrderStatus)) {
+        if (!(object instanceof OrderStatusEntity)) {
             return false;
         }
-        OrderStatus other = (OrderStatus) object;
+        OrderStatusEntity other = (OrderStatusEntity) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

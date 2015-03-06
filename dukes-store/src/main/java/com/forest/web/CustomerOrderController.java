@@ -9,8 +9,8 @@ package com.forest.web;
 
 import com.forest.ejb.OrderBean;
 import com.forest.ejb.OrderJMSManager;
-import com.forest.entity.CustomerOrder;
-import com.forest.entity.Person;
+import com.forest.entity.CustomerOrderEntity;
+import com.forest.entity.PersonEntity;
 import com.forest.qualifiers.LoggedIn;
 import com.forest.web.util.AbstractPaginationHelper;
 import com.forest.web.util.JsfUtil;
@@ -40,9 +40,9 @@ public class CustomerOrderController implements Serializable {
     private static final long serialVersionUID = 8606060319870740714L;
     @Inject
     @LoggedIn
-    private Person user;
-    private List<CustomerOrder> myOrders;
-    private CustomerOrder current;
+    private PersonEntity user;
+    private List<CustomerOrderEntity> myOrders;
+    private CustomerOrderEntity current;
     private DataModel items = null;
     @EJB
     private com.forest.ejb.OrderBean ejbFacade;
@@ -56,9 +56,9 @@ public class CustomerOrderController implements Serializable {
     public CustomerOrderController() {
     }
 
-    public CustomerOrder getSelected() {
+    public CustomerOrderEntity getSelected() {
         if (current == null) {
-            current = new CustomerOrder();
+            current = new CustomerOrderEntity();
             selectedItemIndex = -1;
         }
         return current;
@@ -91,13 +91,13 @@ public class CustomerOrderController implements Serializable {
     }
 
     public PageNavigation prepareView() {
-        current = (CustomerOrder) getItems().getRowData();
+        current = (CustomerOrderEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.VIEW;
     }
 
     public PageNavigation prepareCreate() {
-        current = new CustomerOrder();
+        current = new CustomerOrderEntity();
         selectedItemIndex = -1;
         return PageNavigation.CREATE;
     }
@@ -114,7 +114,7 @@ public class CustomerOrderController implements Serializable {
     }
 
     public PageNavigation prepareEdit() {
-        current = (CustomerOrder) getItems().getRowData();
+        current = (CustomerOrderEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.EDIT;
     }
@@ -131,7 +131,7 @@ public class CustomerOrderController implements Serializable {
     }
 
     public PageNavigation destroy() {
-        current = (CustomerOrder) getItems().getRowData();
+        current = (CustomerOrderEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -139,7 +139,7 @@ public class CustomerOrderController implements Serializable {
     }
 
     public PageNavigation cancelOrder() {
-        current = (CustomerOrder) getItems().getRowData();
+        current = (CustomerOrderEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
 
         try {
@@ -160,7 +160,7 @@ public class CustomerOrderController implements Serializable {
         return PageNavigation.INDEX;
     }
 
-    public List<CustomerOrder> getMyOrders() {
+    public List<CustomerOrderEntity> getMyOrders() {
 
         if (user != null) {
 
@@ -265,7 +265,7 @@ public class CustomerOrderController implements Serializable {
         this.searchString = searchString;
     }
 
-    @FacesConverter(forClass = CustomerOrder.class)
+    @FacesConverter(forClass = CustomerOrderEntity.class)
     public static class CustomerOrderControllerConverter implements Converter {
 
         @Override
@@ -295,8 +295,8 @@ public class CustomerOrderController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof CustomerOrder) {
-                CustomerOrder o = (CustomerOrder) object;
+            if (object instanceof CustomerOrderEntity) {
+                CustomerOrderEntity o = (CustomerOrderEntity) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + CustomerOrderController.class.getName());

@@ -7,8 +7,8 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.Category;
-import com.forest.entity.Product;
+import com.forest.entity.CategoryEntity;
+import com.forest.entity.ProductEntity;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +24,7 @@ import javax.persistence.criteria.Root;
  * @author markito
  */
 @Stateless
-public class ProductBean extends AbstractFacade<Product> {
+public class ProductBean extends AbstractFacade<ProductEntity> {
 
     private static final Logger logger = 
             Logger.getLogger(ProductBean.class.getCanonicalName());
@@ -38,7 +38,7 @@ public class ProductBean extends AbstractFacade<Product> {
     }
 
     public ProductBean() {
-        super(Product.class);
+        super(ProductEntity.class);
     }
 
     /**
@@ -47,16 +47,16 @@ public class ProductBean extends AbstractFacade<Product> {
      * @param categoryId
      * @return 
      */
-    public List<Product> findByCategory(int[] range, int categoryId) {       
-         Category cat = new Category();
+    public List<ProductEntity> findByCategory(int[] range, int categoryId) {       
+         CategoryEntity cat = new CategoryEntity();
          cat.setId(categoryId);
          
          CriteriaBuilder qb = em.getCriteriaBuilder();
-         CriteriaQuery<Product> query = qb.createQuery(Product.class);
-         Root<Product> product = query.from(Product.class);
+         CriteriaQuery<ProductEntity> query = qb.createQuery(ProductEntity.class);
+         Root<ProductEntity> product = query.from(ProductEntity.class);
          query.where(qb.equal(product.get("category"), cat));
 
-         List<Product> result = this.findRange(range, query);
+         List<ProductEntity> result = this.findRange(range, query);
          
          logger.log(Level.FINEST, "Product List size: {0}", result.size());
          

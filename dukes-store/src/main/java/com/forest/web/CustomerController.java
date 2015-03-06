@@ -8,8 +8,8 @@
 package com.forest.web;
 
 import com.forest.ejb.UserBean;
-import com.forest.entity.Customer;
-import com.forest.entity.Person;
+import com.forest.entity.CustomerEntity;
+import com.forest.entity.PersonEntity;
 import com.forest.qualifiers.LoggedIn;
 import com.forest.web.util.JsfUtil;
 import com.forest.web.util.MD5Util;
@@ -40,8 +40,8 @@ public class CustomerController implements Serializable {
 
     @Inject
     @LoggedIn
-    Person authenticated;
-    private Customer current;
+    PersonEntity authenticated;
+    private CustomerEntity current;
     private DataModel items = null;
     @EJB
     private com.forest.ejb.UserBean ejbFacade;
@@ -54,9 +54,9 @@ public class CustomerController implements Serializable {
     public CustomerController() {
     }
 
-    public Customer getSelected() {
+    public CustomerEntity getSelected() {
         if (current == null) {
-            current = new Customer();
+            current = new CustomerEntity();
             selectedItemIndex = -1;
         }
         return current;
@@ -92,18 +92,18 @@ public class CustomerController implements Serializable {
     }
 
     public PageNavigation prepareView() {
-        current     = (Customer) getItems().getRowData();
+        current     = (CustomerEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.VIEW;
     }
 
     public PageNavigation prepareCreate() {
-        current = new Customer();
+        current = new CustomerEntity();
         selectedItemIndex = -1;
         return PageNavigation.CREATE;
     }
 
-    private boolean isUserDuplicated(Person p) {
+    private boolean isUserDuplicated(PersonEntity p) {
         return (getFacade().getUserByEmail(p.getEmail()) == null) ? false : true;
     }
 
@@ -128,7 +128,7 @@ public class CustomerController implements Serializable {
     }
 
     public PageNavigation prepareEdit() {
-        current = (Customer) getItems().getRowData();
+        current = (CustomerEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.EDIT;
     }
@@ -146,7 +146,7 @@ public class CustomerController implements Serializable {
     }
 
     public PageNavigation destroy() {
-        current = (Customer) getItems().getRowData();
+        current = (CustomerEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -221,7 +221,7 @@ public class CustomerController implements Serializable {
         return JsfUtil.getSelectItems(ejbFacade.findAll(), true);
     }
 
-    @FacesConverter(forClass = Customer.class)
+    @FacesConverter(forClass = CustomerEntity.class)
     public static class CustomerControllerConverter implements Converter {
 
         @Override
@@ -251,8 +251,8 @@ public class CustomerController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof Customer) {
-                Customer o = (Customer) object;
+            if (object instanceof CustomerEntity) {
+                CustomerEntity o = (CustomerEntity) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + CustomerController.class.getName());
@@ -260,15 +260,15 @@ public class CustomerController implements Serializable {
         }
     }
 
-    public void setCustomer(Customer user) {
+    public void setCustomer(CustomerEntity user) {
         this.authenticated = user;
     }
 
-    public Person getAuthenticated() {
+    public PersonEntity getAuthenticated() {
         return authenticated;
     }
     
-    public void setAuthenticated(Person p) {
+    public void setAuthenticated(PersonEntity p) {
         this.authenticated = p;
     }
 }

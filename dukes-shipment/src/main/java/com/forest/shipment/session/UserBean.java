@@ -7,8 +7,8 @@
  */
 package com.forest.shipment.session;
 
-import com.forest.entity.Customer;
-import com.forest.entity.Person;
+import com.forest.entity.CustomerEntity;
+import com.forest.entity.PersonEntity;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,7 +19,7 @@ import javax.persistence.Query;
  * @author markito
  */
 @Stateless
-public class UserBean extends AbstractFacade<Customer> {
+public class UserBean extends AbstractFacade<CustomerEntity> {
     
     @PersistenceContext(unitName="forestPU")
     private EntityManager em;
@@ -29,16 +29,16 @@ public class UserBean extends AbstractFacade<Customer> {
         return em;
     }
     
-    public Person getUserByEmail(String email) {
+    public PersonEntity getUserByEmail(String email) {
         Query createNamedQuery = getEntityManager().createNamedQuery("Person.findByEmail");
         
         createNamedQuery.setParameter("email", email);
         
-        return (Person) createNamedQuery.getSingleResult();
+        return (PersonEntity) createNamedQuery.getSingleResult();
     }
     
     public UserBean() {
-        super(Customer.class);
+        super(CustomerEntity.class);
     }
 
 }

@@ -8,7 +8,7 @@
 package com.forest.web;
 
 import com.forest.ejb.CategoryBean;
-import com.forest.entity.Category;
+import com.forest.entity.CategoryEntity;
 import com.forest.web.util.AbstractPaginationHelper;
 import com.forest.web.util.JsfUtil;
 import com.forest.web.util.PageNavigation;
@@ -32,7 +32,7 @@ public class CategoryController implements Serializable {
     private static final String BUNDLE = "bundles.Bundle";
     private static final long serialVersionUID = 2310259107429450847L;
 
-    private Category current;
+    private CategoryEntity current;
     private DataModel items = null;
     @EJB
     private com.forest.ejb.CategoryBean ejbFacade;
@@ -42,9 +42,9 @@ public class CategoryController implements Serializable {
     public CategoryController() {
     }
 
-    public Category getSelected() {
+    public CategoryEntity getSelected() {
         if (current == null) {
-            current = new Category();
+            current = new CategoryEntity();
             selectedItemIndex = -1;
         }
         return current;
@@ -79,13 +79,13 @@ public class CategoryController implements Serializable {
     }
 
     public PageNavigation prepareView() {
-        current = (Category) getItems().getRowData();
+        current = (CategoryEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.VIEW; //.getText();
     }
 
     public PageNavigation prepareCreate() {
-        current = new Category();
+        current = new CategoryEntity();
         selectedItemIndex = -1;
         return PageNavigation.CREATE; //.getText();//"Create";
     }
@@ -103,7 +103,7 @@ public class CategoryController implements Serializable {
     }
 
     public PageNavigation prepareEdit() {
-        current = (Category) getItems().getRowData();
+        current = (CategoryEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.EDIT;
     }
@@ -120,7 +120,7 @@ public class CategoryController implements Serializable {
     }
 
     public PageNavigation destroy() {
-        current = (Category) getItems().getRowData();
+        current = (CategoryEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -195,7 +195,7 @@ public class CategoryController implements Serializable {
         return JsfUtil.getSelectItems(ejbFacade.findAll(), true);
     }
 
-    @FacesConverter(forClass = Category.class)
+    @FacesConverter(forClass = CategoryEntity.class)
     public static class CategoryControllerConverter implements Converter {
 
         @Override
@@ -228,8 +228,8 @@ public class CategoryController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof Category) {
-                Category o = (Category) object;
+            if (object instanceof CategoryEntity) {
+                CategoryEntity o = (CategoryEntity) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object 

@@ -7,8 +7,8 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.Customer;
-import com.forest.entity.Person;
+import com.forest.entity.CustomerEntity;
+import com.forest.entity.PersonEntity;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,7 +19,7 @@ import javax.persistence.Query;
  * @author markito
  */
 @Stateless
-public class UserBean extends AbstractFacade<Customer> {
+public class UserBean extends AbstractFacade<CustomerEntity> {
 
     @PersistenceContext(unitName="forestPU")
     private EntityManager em;
@@ -35,7 +35,7 @@ public class UserBean extends AbstractFacade<Customer> {
      * @param customer
      * @return 
      */
-    public boolean createUser(Customer customer) {
+    public boolean createUser(CustomerEntity customer) {
 
         // check if user exists
         if (getUserByEmail(customer.getEmail()) == null) {
@@ -46,13 +46,13 @@ public class UserBean extends AbstractFacade<Customer> {
         }
     }
 
-    public Person getUserByEmail(String email) {
+    public PersonEntity getUserByEmail(String email) {
         Query createNamedQuery = getEntityManager().createNamedQuery("Person.findByEmail");
 
         createNamedQuery.setParameter("email", email);
 
         if (createNamedQuery.getResultList().size() > 0) {
-            return (Person) createNamedQuery.getSingleResult();
+            return (PersonEntity) createNamedQuery.getSingleResult();
         }
         else {
             return null;
@@ -60,6 +60,6 @@ public class UserBean extends AbstractFacade<Customer> {
     }
 
     public UserBean() {
-        super(Customer.class);
+        super(CustomerEntity.class);
     }
 }

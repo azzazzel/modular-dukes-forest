@@ -8,7 +8,7 @@
 package com.forest.web;
 
 import com.forest.ejb.OrderDetailBean;
-import com.forest.entity.OrderDetail;
+import com.forest.entity.OrderDetailEntity;
 import com.forest.web.util.AbstractPaginationHelper;
 import com.forest.web.util.JsfUtil;
 import com.forest.web.util.PageNavigation;
@@ -29,7 +29,7 @@ import javax.inject.Named;
 public class OrderDetailController {
     private static final String BUNDLE = "bundles.Bundle";
 
-    private OrderDetail current;
+    private OrderDetailEntity current;
     private DataModel items = null;
     @EJB
     private com.forest.ejb.OrderDetailBean ejbFacade;
@@ -39,9 +39,9 @@ public class OrderDetailController {
     public OrderDetailController() {
     }
 
-    public OrderDetail getSelected() {
+    public OrderDetailEntity getSelected() {
         if (current == null) {
-            current = new OrderDetail();
+            current = new OrderDetailEntity();
             selectedItemIndex = -1;
         }
         return current;
@@ -78,13 +78,13 @@ public class OrderDetailController {
     }
 
     public PageNavigation prepareView() {
-        current = (OrderDetail) getItems().getRowData();
+        current = (OrderDetailEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.VIEW;
     }
 
     public PageNavigation prepareCreate() {
-        current = new OrderDetail();
+        current = new OrderDetailEntity();
         selectedItemIndex = -1;
         return PageNavigation.CREATE;
     }
@@ -101,7 +101,7 @@ public class OrderDetailController {
     }
 
     public PageNavigation prepareEdit() {
-        current = (OrderDetail) getItems().getRowData();
+        current = (OrderDetailEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.EDIT;
     }
@@ -118,7 +118,7 @@ public class OrderDetailController {
     }
 
     public PageNavigation destroy() {
-        current = (OrderDetail) getItems().getRowData();
+        current = (OrderDetailEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -193,7 +193,7 @@ public class OrderDetailController {
         return JsfUtil.getSelectItems(ejbFacade.findAll(), true);
     }
 
-    @FacesConverter(forClass = OrderDetail.class)
+    @FacesConverter(forClass = OrderDetailEntity.class)
     public static class OrderDetailControllerConverter implements Converter {
 
         private static final String SEPARATOR = "#";
@@ -209,16 +209,16 @@ public class OrderDetailController {
             return controller.ejbFacade.find(getKey(value));
         }
 
-        com.forest.entity.OrderDetailPK getKey(String value) {
-            com.forest.entity.OrderDetailPK key;
+        com.forest.entity.OrderDetailPKEntity getKey(String value) {
+            com.forest.entity.OrderDetailPKEntity key;
             String values[] = value.split(SEPARATOR_ESCAPED);
-            key = new com.forest.entity.OrderDetailPK();
+            key = new com.forest.entity.OrderDetailPKEntity();
             key.setOrderId(Integer.parseInt(values[0]));
             key.setProductId(Integer.parseInt(values[1]));
             return key;
         }
 
-        String getStringKey(com.forest.entity.OrderDetailPK value) {
+        String getStringKey(com.forest.entity.OrderDetailPKEntity value) {
             StringBuilder sb = new StringBuilder();
             sb.append(value.getOrderId());
             sb.append(SEPARATOR);
@@ -231,8 +231,8 @@ public class OrderDetailController {
             if (object == null) {
                 return null;
             }
-            if (object instanceof OrderDetail) {
-                OrderDetail o = (OrderDetail) object;
+            if (object instanceof OrderDetailEntity) {
+                OrderDetailEntity o = (OrderDetailEntity) object;
                 return getStringKey(o.getOrderDetailPK());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + OrderDetailController.class.getName());

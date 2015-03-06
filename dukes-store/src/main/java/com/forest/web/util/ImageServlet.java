@@ -8,7 +8,7 @@
 package com.forest.web.util;
 
 import com.forest.ejb.ProductBean;
-import com.forest.entity.Product;
+import com.forest.entity.ProductEntity;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -68,7 +68,7 @@ public class ImageServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND); // 404.
             return;
         }
-        Product p = productBean.find(Integer.parseInt(requestedImage));
+        ProductEntity p = productBean.find(Integer.parseInt(requestedImage));
 
         if ((p == null) || (p.getImgSrc() == null)) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND); // 404.

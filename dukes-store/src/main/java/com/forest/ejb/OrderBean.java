@@ -7,8 +7,8 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.CustomerOrder;
-import com.forest.entity.OrderStatus;
+import com.forest.entity.CustomerOrderEntity;
+import com.forest.entity.OrderStatusEntity;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,19 +28,19 @@ import javax.ws.rs.*;
  */
 @Stateless
 @Path("/orders")
-public class OrderBean extends AbstractFacade<CustomerOrder> implements Serializable {
+public class OrderBean extends AbstractFacade<CustomerOrderEntity> implements Serializable {
 
     private static final Logger logger = 
             Logger.getLogger(ShoppingCart.class.getCanonicalName());
     private static final long serialVersionUID = -2407971550575800416L;
     @PersistenceContext(unitName = "forestPU")
     private EntityManager em;
-    CustomerOrder order;
+    CustomerOrderEntity order;
     @EJB
     OrderStatusBean statusBean;
 
     public OrderBean() {
-        super(CustomerOrder.class);
+        super(CustomerOrderEntity.class);
     }
 
     /**
@@ -53,7 +53,7 @@ public class OrderBean extends AbstractFacade<CustomerOrder> implements Serializ
         return em;
     }
 
-    public List<CustomerOrder> getOrderByCustomerId(Integer id) {
+    public List<CustomerOrderEntity> getOrderByCustomerId(Integer id) {
         Query createNamedQuery = getEntityManager().createNamedQuery("CustomerOrder.findByCustomerId");
 
         createNamedQuery.setParameter("id", id);
@@ -61,22 +61,22 @@ public class OrderBean extends AbstractFacade<CustomerOrder> implements Serializ
         return createNamedQuery.getResultList();
     }
     
-    public CustomerOrder getOrderById(Integer id) {
+    public CustomerOrderEntity getOrderById(Integer id) {
         Query createNamedQuery = getEntityManager().createNamedQuery("CustomerOrder.findById");
         createNamedQuery.setParameter("id", id);
-        return (CustomerOrder) createNamedQuery.getSingleResult();
+        return (CustomerOrderEntity) createNamedQuery.getSingleResult();
     }
   
     @GET
     @Produces({"application/xml", "application/json"})
-    public List<CustomerOrder> getOrderByStatus(@QueryParam("status") int status) {
+    public List<CustomerOrderEntity> getOrderByStatus(@QueryParam("status") int status) {
 
         Query createNamedQuery = getEntityManager().createNamedQuery("CustomerOrder.findByStatus");
 
-        OrderStatus result = statusBean.find(status);
+        OrderStatusEntity result = statusBean.find(status);
 
         createNamedQuery.setParameter("status", result.getStatus());
-        List<CustomerOrder> orders = createNamedQuery.getResultList();
+        List<CustomerOrderEntity> orders = createNamedQuery.getResultList();
 
         return orders;
     }
@@ -94,7 +94,7 @@ public class OrderBean extends AbstractFacade<CustomerOrder> implements Serializ
             if (order != null) {
                 logger.log(Level.FINEST, "Updating order {0} status to {1}", new Object[]{order.getId(), newStatus});
 
-                OrderStatus oStatus = statusBean.find(new Integer(newStatus));
+                OrderStatusEntity oStatus = statusBean.find(new Integer(newStatus));
                 order.setOrderStatus(oStatus);
 
                 em.merge(order);

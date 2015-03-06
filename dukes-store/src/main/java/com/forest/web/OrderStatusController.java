@@ -8,7 +8,7 @@
 package com.forest.web;
 
 import com.forest.ejb.OrderStatusBean;
-import com.forest.entity.OrderStatus;
+import com.forest.entity.OrderStatusEntity;
 import com.forest.web.util.AbstractPaginationHelper;
 import com.forest.web.util.JsfUtil;
 import com.forest.web.util.PageNavigation;
@@ -29,7 +29,7 @@ import javax.inject.Named;
 public class OrderStatusController {
     private static final String BUNDLE = "bundles.Bundle";
 
-    private OrderStatus current;
+    private OrderStatusEntity current;
     private DataModel items = null;
     @EJB
     private com.forest.ejb.OrderStatusBean ejbFacade;
@@ -39,9 +39,9 @@ public class OrderStatusController {
     public OrderStatusController() {
     }
 
-    public OrderStatus getSelected() {
+    public OrderStatusEntity getSelected() {
         if (current == null) {
-            current = new OrderStatus();
+            current = new OrderStatusEntity();
             selectedItemIndex = -1;
         }
         return current;
@@ -76,13 +76,13 @@ public class OrderStatusController {
     }
 
     public PageNavigation prepareView() {
-        current = (OrderStatus) getItems().getRowData();
+        current = (OrderStatusEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.VIEW;
     }
 
     public PageNavigation prepareCreate() {
-        current = new OrderStatus();
+        current = new OrderStatusEntity();
         selectedItemIndex = -1;
         return PageNavigation.CREATE;
     }
@@ -99,7 +99,7 @@ public class OrderStatusController {
     }
 
     public PageNavigation prepareEdit() {
-        current = (OrderStatus) getItems().getRowData();
+        current = (OrderStatusEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.EDIT;
     }
@@ -116,7 +116,7 @@ public class OrderStatusController {
     }
 
     public PageNavigation destroy() {
-        current = (OrderStatus) getItems().getRowData();
+        current = (OrderStatusEntity) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -191,7 +191,7 @@ public class OrderStatusController {
         return JsfUtil.getSelectItems(ejbFacade.findAll(), true);
     }
 
-    @FacesConverter(forClass = OrderStatus.class)
+    @FacesConverter(forClass = OrderStatusEntity.class)
     public static class OrderStatusControllerConverter implements Converter {
 
         @Override
@@ -221,8 +221,8 @@ public class OrderStatusController {
             if (object == null) {
                 return null;
             }
-            if (object instanceof OrderStatus) {
-                OrderStatus o = (OrderStatus) object;
+            if (object instanceof OrderStatusEntity) {
+                OrderStatusEntity o = (OrderStatusEntity) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + OrderStatusController.class.getName());
