@@ -175,6 +175,7 @@
 		<module>dukes-payment</module>
 		<module>dukes-store</module>
 		<module>dukes-shipment</module>
+		<module>dukes-domain-model</module>
 	</modules>
 
 
