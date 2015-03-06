@@ -8,7 +8,7 @@
     <version>7.0.6-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>dukes-forest</name>
+	<name>Duke's Forest</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -170,7 +170,7 @@
 
 	<modules>
 		<module>events</module>
-		<module>entities</module>
+		<module>jpa-persistence</module>
 		<module>dukes-resources</module>
 		<module>dukes-payment</module>
 		<module>dukes-store</module>

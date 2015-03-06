@@ -8,11 +8,10 @@
 		<version>7.0.6-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.glassfish.javaeetutorial</groupId>
-	<artifactId>entities</artifactId>
-	<packaging>jar</packaging>
+    <artifactId>jpa-persistence</artifactId>
+    <packaging>jar</packaging>
 
-	<name>entities</name>
+    <name>JPA persistence module</name>
 
 	<dependencies>
 		<dependency>
