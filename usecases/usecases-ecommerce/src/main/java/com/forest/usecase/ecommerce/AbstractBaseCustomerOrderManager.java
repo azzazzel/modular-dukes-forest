@@ -8,6 +8,9 @@ import com.forest.model.CustomerOrder;
 import com.forest.model.OrderStatus;
 import com.forest.usecase.ecommerce.persistence.CustomerOrderPersistence;
 import com.forest.usecase.ecommerce.persistence.OrderStatusPersistence;
+import com.forest.usecase.ecommerce.providers.PackingProvider;
+import com.forest.usecase.ecommerce.providers.PaymentProvider;
+import com.forest.usecase.ecommerce.providers.ShippingProvider;
 
 public abstract class AbstractBaseCustomerOrderManager implements CustomerOrderManager {
 
@@ -19,122 +22,190 @@ public abstract class AbstractBaseCustomerOrderManager implements CustomerOrderM
 
 	protected abstract OrderStatusPersistence getOrderStatusPersistence();
 
-	/* (non-Javadoc)
-	 * @see com.forest.usecase.ecommerce.CustomerOrderManager#createCustomerOrder(com.forest.model.CustomerOrder)
-	 */
-	@Override
-	public void createCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrderPersistence().createCustomerOrder(customerOrder);
-	}
+	protected abstract PaymentProvider getPaymentProvider();
+	
+	protected abstract PackingProvider getPackingProvider();
+	
+	protected abstract ShippingProvider getShippingProvider();
 
-	/* (non-Javadoc)
-	 * @see com.forest.usecase.ecommerce.CustomerOrderManager#getCustomerOrder(java.lang.Integer)
-	 */
+	
 	@Override
 	public CustomerOrder getCustomerOrder(Integer id) {
 		return getCustomerOrderPersistence().getCustomerOrder(id);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.forest.usecase.ecommerce.CustomerOrderManager#updateCustomerOrder(com.forest.model.CustomerOrder)
-	 */
 	@Override
-	public void updateCustomerOrder(CustomerOrder customerOrder) {
+	public void openNewOrder(CustomerOrder customerOrder) {
+		customerOrder.setOrderStatus(getOrderStatusPersistence().getOrderStatus(Status.NEW.getStatus()));
+		getCustomerOrderPersistence().createCustomerOrder(customerOrder);
+		logger.log(Level.INFO, " --> New order with id {} created !!!", customerOrder.getId());
+	}
+
+	@Override
+	public void updateNewOrder(CustomerOrder customerOrder) {
+//		System.out.println("ORDER STATUS: " + getStatus(customerOrder));
+//		System.out.println("EXPECTED STATUS: " + Status.NEW);
+//		if (!Status.NEW.equals(getStatus(customerOrder))) {
+//			throw new IllegalStateException("Can not update complete order!");
+//		}
+		getCustomerOrderPersistence().updateCustomerOrder(customerOrder);
+		logger.log(Level.INFO, " --> Order {0} updated !!!", customerOrder.getId());
+	}
+
+	@Override
+	public void processOrder(int customerOrderId) {
+		CustomerOrder customerOrder = getCustomerOrderPersistence().getCustomerOrder(customerOrderId);
+		if (getPaymentProvider().requestPayment(customerOrder)) {
+			customerOrder.setOrderStatus(getOrderStatusPersistence().getOrderStatus(Status.PENDING_PAYMENT.getStatus()));
+		}
+		logger.log(Level.INFO, " --> Requested payment for order {0} !!!", customerOrderId);
+	}
+	
+	
+	@Override
+	public void paymentReceived(int customerOrderId) {
+		logger.log(Level.INFO, " --> Received payment for order {0} !!!", customerOrderId);
+		CustomerOrder customerOrder = getCustomerOrderPersistence().getCustomerOrder(customerOrderId);
+		/* 
+		 * Perhaps status needs to be changed to something like PAYED here! 
+		 */
+		if (getPackingProvider().requestPacking(customerOrder)) {
+			logger.log(Level.INFO, " --> Requested packing items for order {0} !!!", customerOrderId);
+			/* 
+			 * Perhaps status needs to be changed to something like PENDING_PACKING here! 
+			 */
+		}
+	}
+
+	@Override
+	public void paymentCanceled(int customerOrderId) {
+		logger.log(Level.INFO, " --> Canceled payment for order {0} !!!", customerOrderId);
+		CustomerOrder customerOrder = getCustomerOrderPersistence().getCustomerOrder(customerOrderId);
+		customerOrder.setOrderStatus(getOrderStatusPersistence().getOrderStatus(Status.CANCELLED_PAYMENT.getStatus()));
 		getCustomerOrderPersistence().updateCustomerOrder(customerOrder);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.forest.usecase.ecommerce.CustomerOrderManager#removeCustomerOrder(com.forest.model.CustomerOrder)
-	 */
 	@Override
-	public void removeCustomerOrder(CustomerOrder customerOrder) {
-		getCustomerOrderPersistence().removeCustomerOrder(customerOrder);
+	public void itemsPacked(int customerOrderId) {
+		logger.log(Level.INFO, " --> Items for order {0} are now packed!!!", customerOrderId);
+		CustomerOrder customerOrder = getCustomerOrderPersistence().getCustomerOrder(customerOrderId);
+		customerOrder.setOrderStatus(getOrderStatusPersistence().getOrderStatus(Status.READY_TO_SHIP.getStatus()));
+		getCustomerOrderPersistence().updateCustomerOrder(customerOrder);
+		if (getShippingProvider().requestShipping(customerOrder)) {
+			logger.log(Level.INFO, " --> Requested shipping of order {0} !!!", customerOrderId);
+			/* 
+			 * Perhaps status needs to be changed to something like PENDING_SHIPPING here! 
+			 */
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.forest.usecase.ecommerce.CustomerOrderManager#count()
-	 */
+	@Override
+	public void orderShipped(int customerOrderId) {
+		logger.log(Level.INFO, " --> Order {0} was shipped !!!", customerOrderId);
+		CustomerOrder customerOrder = getCustomerOrderPersistence().getCustomerOrder(customerOrderId);
+		customerOrder.setOrderStatus(getOrderStatusPersistence().getOrderStatus(Status.SHIPPED.getStatus()));
+		getCustomerOrderPersistence().updateCustomerOrder(customerOrder);
+	}
+
+	@Override
+	public void shippingCanceled(int customerOrderId) {
+		logger.log(Level.INFO, " --> Canceled shipping for order {0} !!!", customerOrderId);
+		CustomerOrder customerOrder = getCustomerOrderPersistence().getCustomerOrder(customerOrderId);
+		customerOrder.setOrderStatus(getOrderStatusPersistence().getOrderStatus(Status.CANCELLED_MANUAL.getStatus()));
+		getCustomerOrderPersistence().updateCustomerOrder(customerOrder);
+	}	
+
+	@Override
+	public void removeCustomerOrder(CustomerOrder customerOrder) {
+		Status status = getStatus(customerOrder);
+		if (Status.PENDING_PAYMENT.equals(status) || Status.READY_TO_SHIP.equals(status)) {
+			throw new IllegalStateException("Can not delete pending orders! Please cancel it first!");
+		}
+		getCustomerOrderPersistence().removeCustomerOrder(customerOrder);
+		logger.log(Level.INFO, " --> Order {0} was removed !!!", customerOrder.getId());
+	}
+	
+	@Override
+	public void cancelCustomerOrder(int customerOrderId) {
+		CustomerOrder customerOrder = getCustomerOrderPersistence().getCustomerOrder(customerOrderId);
+		Status currentStatus = getStatus(customerOrder);
+
+		switch (currentStatus) {
+		
+		case SHIPPED: 
+			throw new IllegalStateException("Can not cancel shipped order!");
+		case CANCELLED_MANUAL: 
+		case CANCELLED_PAYMENT: 
+			throw new IllegalStateException("Can not cancel already canceled order!");
+		case PENDING_PAYMENT: 
+			getPaymentProvider().cancelPaymentRequest(customerOrderId);
+			break;
+//		case PENDING_PACKING: 
+//			packingProvider.cancelPackingRequest(customerOrderId);
+//			break;
+		case READY_TO_SHIP: 
+			getShippingProvider().cancelShippingRequest(customerOrderId);
+			break;
+		default:
+			customerOrder.setOrderStatus(getOrderStatusPersistence().getOrderStatus(Status.CANCELLED_MANUAL.getStatus()));
+			getCustomerOrderPersistence().updateCustomerOrder(customerOrder);
+			logger.log(Level.INFO, " --> Order {0} was canceled !!!", customerOrder.getId());
+		}
+		
+		
+	}
+
+	private Status getStatus(CustomerOrder customerOrder) {
+		Status currentStatus = Status.values()[customerOrder.getOrderStatus().getId()];
+		return currentStatus;
+	}
+
+
+	
 	@Override
 	public int count() {
 		return getCustomerOrderPersistence().count();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.forest.usecase.ecommerce.CustomerOrderManager#getAll()
-	 */
 	@Override
 	public List<CustomerOrder> getAll() {
 		return getCustomerOrderPersistence().findAll();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.forest.usecase.ecommerce.CustomerOrderManager#getAllInRange(int)
-	 */
 	@Override
 	public List<CustomerOrder> getAllInRange(int... range) {
 		return getCustomerOrderPersistence().findRange(range);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.forest.usecase.ecommerce.CustomerOrderManager#getOrderByCustomerId(java.lang.Integer)
-	 */
-	@Override
+	
+    @Override
 	public List<CustomerOrder> getOrderByCustomerId(Integer id) {
 		return getCustomerOrderPersistence().getOrdersByCustomerId(id);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.forest.usecase.ecommerce.CustomerOrderManager#getOrderByStatus(int)
-	 */
-	@Override
+    }
+  
+    @Override
 	public List<CustomerOrder> getOrderByStatus(int status) {
-		OrderStatus orderStatus = getOrderStatusPersistence().getOrderStatus(
-				status);
-		return getCustomerOrderPersistence().getOrdersByStatus(orderStatus);
-	}
+        OrderStatus orderStatus = getOrderStatusPersistence().getOrderStatus(status);
+        return getCustomerOrderPersistence().getOrdersByStatus(orderStatus);
+    }
+	
+    enum Status {
 
-	/* (non-Javadoc)
-	 * @see com.forest.usecase.ecommerce.CustomerOrderManager#setOrderStatus(int, java.lang.String)
-	 */
-	@Override
-	public void setOrderStatus(int orderId, String newStatus) {
-		CustomerOrder order;
-		try {
-			order = (CustomerOrder) getCustomerOrderPersistence()
-					.getCustomerOrder(orderId);
+    	NEW(1),
+        PENDING_PAYMENT(2),
+        READY_TO_SHIP(3),
+        SHIPPED(4),
+        CANCELLED_PAYMENT(5),
+        CANCELLED_MANUAL(6);
+        private int status;
 
-			if (order != null) {
-				logger.log(Level.FINEST, "Updating order {0} status to {1}",
-						new Object[] { order.getId(), newStatus });
+        private Status(int pStatus) {
+            status = pStatus;
+        }
 
-				OrderStatus oStatus = getOrderStatusPersistence()
-						.getOrderStatus(new Integer(newStatus));
-				order.setOrderStatus(oStatus);
-
-				getCustomerOrderPersistence().updateCustomerOrder(order);
-
-				logger.info("Order Updated!");
-			}
-
-		} catch (Exception ex) {
-
-			logger.log(Level.SEVERE, ex.getMessage());
-		}
-	}
-
-	public enum Status {
-
-		PENDING_PAYMENT(2), READY_TO_SHIP(3), SHIPPED(4), CANCELLED_PAYMENT(5), CANCELLED_MANUAL(
-				6);
-		private int status;
-
-		private Status(int pStatus) {
-			status = pStatus;
-		}
-
-		public int getStatus() {
-			return status;
-		}
-	}
+        public int getStatus() {
+            return status;
+        }
+    }
 
 }

@@ -14,6 +14,7 @@ import javax.persistence.PersistenceContext;
 
 import com.forest.entity.CustomerEntity;
 import com.forest.model.Customer;
+import com.forest.model.Person;
 import com.forest.persitence.jpa.PersonPersistenceJPA;
 import com.forest.usecase.identity.AbstractBasePersonManager;
 import com.forest.usecase.identity.persistence.PersonPersistence;
@@ -44,5 +45,11 @@ public class UserBean extends AbstractBasePersonManager {
 		return personPersistance;
 	}
 
+	/*
+	 * Ugly hack to work around the problems introduced by poorly organized domain model!
+	 */
+	public Customer toCustomer(Person person) {
+		return  entityManager.find(CustomerEntity.class, person.getId());
+	}
 
 }

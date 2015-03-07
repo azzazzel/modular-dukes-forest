@@ -7,33 +7,80 @@
  */
 package com.forest.ejb;
 
-import com.forest.events.OrderEvent;
-import com.forest.qualifiers.New;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Asynchronous;
+
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.forest.events.OrderEvent;
+import com.forest.model.CustomerOrder;
+import com.forest.qualifiers.New;
+import com.forest.qualifiers.Paid;
+
 /**
- *
+ * 
  * @author markito
  */
 @Named("EventDisptacherBean")
 @Stateless
-public class EventDispatcherBean {
+public class EventDispatcherBean implements PaymentAndPackingProvider {
 
-     private static final Logger logger = Logger.getLogger(EventDispatcherBean.class.getCanonicalName());
+	private static final Logger logger = Logger
+			.getLogger(EventDispatcherBean.class.getCanonicalName());
 
-    
-    @Inject @New
-    Event<OrderEvent> eventManager;
+	@Inject
+	@New
+	Event<OrderEvent> paymentManager;
 
-    @Asynchronous
-    public void publish(OrderEvent event) {
-        logger.log(Level.FINEST, "{0} Sending event from EJB", Thread.currentThread().getName());
-        eventManager.fire(event);
-    }
+	@Inject
+	@Paid
+	Event<OrderEvent> packingManager;
+
+	public boolean requestPacking(CustomerOrder customerOrder) {
+		logger.log(Level.FINEST, "{0} Sending event from EJB", Thread
+				.currentThread().getName());
+		packingManager.fire(orderToEvent(customerOrder));
+		return true;
+	}
+
+	public boolean requestPayment(CustomerOrder customerOrder) {
+		logger.log(Level.FINEST, "{0} Sending event from EJB", Thread
+				.currentThread().getName());
+		paymentManager.fire(orderToEvent(customerOrder));
+		return true;
+	}
+
+	@Override
+	public boolean cancelPackingRequest(int customerOrderid) {
+		/*
+		 * a real provider would have to deal with this request but for this
+		 * demo we'll simply ignore it
+		 */
+		return true;
+	}
+
+	@Override
+	public boolean cancelPaymentRequest(int customerOrderid) {
+		/*
+		 * a real provider would have to deal with this request but for this
+		 * demo we'll simply ignore it
+		 */
+		return true;
+	}
+
+	private OrderEvent orderToEvent(CustomerOrder order) {
+		OrderEvent event = new OrderEvent();
+
+		event.setAmount(order.getAmount());
+		event.setCustomerID(order.getCustomer().getId());
+		event.setDateCreated(order.getDateCreated());
+		event.setStatusID(order.getOrderStatus().getId());
+		event.setOrderID(order.getId());
+
+		return event;
+	}
+
 }

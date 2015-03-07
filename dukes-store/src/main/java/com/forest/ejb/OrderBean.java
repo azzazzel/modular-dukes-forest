@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,12 +23,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import com.forest.entity.CustomerOrderEntity;
+import com.forest.entity.OrderDetailEntity;
+import com.forest.entity.OrderDetailPKEntity;
 import com.forest.model.CustomerOrder;
+import com.forest.model.OrderDetail;
 import com.forest.persitence.jpa.OrderPersistenceJPA;
 import com.forest.persitence.jpa.OrderStatusPersistenceJPA;
 import com.forest.usecase.ecommerce.AbstractBaseCustomerOrderManager;
 import com.forest.usecase.ecommerce.persistence.CustomerOrderPersistence;
 import com.forest.usecase.ecommerce.persistence.OrderStatusPersistence;
+import com.forest.usecase.ecommerce.providers.PackingProvider;
+import com.forest.usecase.ecommerce.providers.PaymentProvider;
+import com.forest.usecase.ecommerce.providers.ShippingProvider;
 
 /**
  * OrderBean is an EJB exposed as RESTful service Provides methods to manipulate
@@ -44,6 +51,11 @@ public class OrderBean extends AbstractBaseCustomerOrderManager implements Seria
 	@PersistenceContext(unitName = "forestPU")
 	private EntityManager entityManager;
 
+    @EJB
+    PaymentAndPackingProvider paymentAndPackingProvider;
+    
+    @EJB
+    ShippingProvider shippingProvider;
 
 	private OrderStatusPersistenceJPA orderStatusPersistance = new OrderStatusPersistenceJPA();
 	
@@ -59,6 +71,14 @@ public class OrderBean extends AbstractBaseCustomerOrderManager implements Seria
     public CustomerOrder newCustomerOrderInstance() {
     	return new CustomerOrderEntity();
 	}
+
+    public OrderDetail newOrderDetailInstance() {
+    	return new OrderDetailEntity();
+	}
+    
+    public OrderDetailPKEntity createOrderDetailPK(int orderId, int personId) {
+    	return new OrderDetailPKEntity(orderId, personId);
+	}
     
 	@Override
 	protected CustomerOrderPersistence getCustomerOrderPersistence() {
@@ -71,6 +91,23 @@ public class OrderBean extends AbstractBaseCustomerOrderManager implements Seria
 		return orderStatusPersistance;
 	}    
     
+	
+	@Override
+	protected PackingProvider getPackingProvider() {
+		return paymentAndPackingProvider;
+	}
+	
+	
+	@Override
+	protected PaymentProvider getPaymentProvider() {
+		return paymentAndPackingProvider;
+	}
+	
+	@Override
+	protected ShippingProvider getShippingProvider() {
+		return shippingProvider;
+	}
+	
 	/**
 	 * *************************************************************************
 	 * * Business methods
@@ -85,14 +122,17 @@ public class OrderBean extends AbstractBaseCustomerOrderManager implements Seria
 	}
 
 	@PUT
-	@Path("{orderId}")
+	@Path("/shipping/{orderId}")
 	@Produces({ "application/xml", "application/json" })
 	public void setOrderStatus(@PathParam("orderId") int orderId,
 			String newStatus) {
-		super.setOrderStatus(orderId, newStatus);
+		
+		if ("SHIPPED".equalsIgnoreCase(newStatus)) {
+			orderShipped(orderId);
+		} else if ("CANCELED".equalsIgnoreCase(newStatus)) {
+			shippingCanceled(orderId);
+		}
+		
 	}
-
-
-
 
 }

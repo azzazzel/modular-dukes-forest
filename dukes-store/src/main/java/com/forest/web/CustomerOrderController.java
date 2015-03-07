@@ -26,7 +26,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.forest.ejb.OrderBean;
-import com.forest.ejb.OrderJMSManager;
 import com.forest.model.CustomerOrder;
 import com.forest.model.Person;
 import com.forest.qualifiers.LoggedIn;
@@ -48,8 +47,6 @@ public class CustomerOrderController implements Serializable {
 	private DataModel items = null;
 	@EJB
 	private com.forest.ejb.OrderBean ejbFacade;
-	@EJB
-	private OrderJMSManager orderJMSManager;
 	private AbstractPaginationHelper pagination;
 	private int selectedItemIndex;
 	private String searchString;
@@ -108,37 +105,11 @@ public class CustomerOrderController implements Serializable {
 		return PageNavigation.CREATE;
 	}
 
-	public PageNavigation create() {
-		try {
-			getFacade().createCustomerOrder(current);
-			JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE)
-					.getString("CustomerOrderCreated"));
-			return prepareCreate();
-		} catch (Exception e) {
-			JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE)
-					.getString("PersistenceErrorOccured"));
-			return null;
-		}
-	}
-
 	public PageNavigation prepareEdit() {
 		current = (CustomerOrder) getItems().getRowData();
 		selectedItemIndex = pagination.getPageFirstItem()
 				+ getItems().getRowIndex();
 		return PageNavigation.EDIT;
-	}
-
-	public PageNavigation update() {
-		try {
-			getFacade().updateCustomerOrder(current);
-			JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE)
-					.getString("CustomerOrderUpdated"));
-			return PageNavigation.VIEW;
-		} catch (Exception e) {
-			JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE)
-					.getString("PersistenceErrorOccured"));
-			return null;
-		}
 	}
 
 	public PageNavigation destroy() {
@@ -156,12 +127,8 @@ public class CustomerOrderController implements Serializable {
 				+ getItems().getRowIndex();
 
 		try {
-			// remove from JMS queue
-			orderJMSManager.deleteMessage(current.getId());
 
-			// update DB order status
-			ejbFacade.setOrderStatus(current.getId(), String
-					.valueOf(OrderBean.Status.CANCELLED_MANUAL.getStatus()));
+			ejbFacade.cancelCustomerOrder(current.getId());
 
 			recreateModel();
 			return PageNavigation.LIST;

@@ -22,13 +22,14 @@ import javax.jms.Queue;
 import javax.jms.QueueBrowser;
 
 import com.forest.model.CustomerOrder;
+import com.forest.usecase.ecommerce.providers.ShippingProvider;
 
 @JMSDestinationDefinition(
         name = "java:global/jms/OrderQueue",
         interfaceName = "javax.jms.Queue",
         destinationName = "PhysicalOrderQueue")
 @Stateless
-public class OrderJMSManager {
+public class OrderJMSManager implements ShippingProvider {
 
     private static final Logger logger = Logger.getLogger(OrderJMSManager.class.getCanonicalName());
     @Inject
@@ -65,4 +66,22 @@ public class OrderJMSManager {
         }
         
     }
+    
+	@Override
+	public boolean requestShipping(CustomerOrder customerOrder) {
+		sendMessage(customerOrder);
+		return true;
+	}
+
+	@Override
+	public boolean cancelShippingRequest(int customerOrderid) {
+		try {
+			deleteMessage(customerOrderid);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+
+	}
 }

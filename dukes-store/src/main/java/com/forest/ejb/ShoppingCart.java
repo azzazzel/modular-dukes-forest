@@ -20,15 +20,12 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.forest.entity.CustomerOrderEntity;
-import com.forest.entity.OrderDetailEntity;
-import com.forest.entity.OrderDetailPKEntity;
-import com.forest.entity.OrderStatusEntity;
-import com.forest.entity.ProductEntity;
-import com.forest.events.OrderEvent;
+import com.forest.model.CustomerOrder;
 import com.forest.model.Group;
 import com.forest.model.OrderDetail;
+import com.forest.model.OrderDetailPK;
 import com.forest.model.Person;
+import com.forest.model.Product;
 import com.forest.qualifiers.LoggedIn;
 import com.forest.web.util.JsfUtil;
 import com.forest.web.util.PageNavigation;
@@ -42,19 +39,20 @@ public class ShoppingCart implements Serializable {
     Conversation conversation;
     @EJB
     OrderBean facade;
+    @EJB
+    UserBean userBean;
     @Inject
     @LoggedIn
     Person user;
     private static final Logger LOGGER = Logger.getLogger(ShoppingCart.class.getCanonicalName());
-    private List<ProductEntity> cartItems;
-    @EJB
-    EventDispatcherBean eventDispatcher;
+    private List<Product> cartItems;
+
 
     public void init() {
         cartItems = new ArrayList<>();
     }
 
-    public String addItem(final ProductEntity p) {
+    public String addItem(final Product p) {
 
         if (cartItems == null) {
             cartItems = new ArrayList<>();
@@ -67,13 +65,13 @@ public class ShoppingCart implements Serializable {
         LOGGER.log(Level.FINEST, "Cart Size: {0}", cartItems.size());
 
         if (!cartItems.contains(p)) {
-            cartItems.add(p);
+            cartItems.add((Product)p);
         }
 
         return "";
     }
 
-    public boolean removeItem(ProductEntity p) {
+    public boolean removeItem(Product p) {
         if (cartItems.contains(p)) {
             return cartItems.remove(p);
         } else {
@@ -88,7 +86,7 @@ public class ShoppingCart implements Serializable {
         }
 
         double total = 0f;
-        for (ProductEntity item : cartItems) {
+        for (Product item : cartItems) {
             total += item.getPrice();
         }
 
@@ -114,23 +112,17 @@ public class ShoppingCart implements Serializable {
                 }
             }
 
-            CustomerOrderEntity order = new CustomerOrderEntity();
-            List<OrderDetail> details = new ArrayList<>();
-
-            OrderStatusEntity orderStatus = new OrderStatusEntity();
-            orderStatus.setId(1); //by default the initial status
-
+            CustomerOrder order = facade.newCustomerOrderInstance();
             order.setDateCreated(Calendar.getInstance().getTime());
-            order.setOrderStatus(orderStatus);
             order.setAmount(getTotal());
-            order.setCustomer(user);
+            order.setCustomer(userBean.toCustomer(user));
+            facade.openNewOrder(order);
 
-            facade.createCustomerOrder(order);
+            List<OrderDetail> details = new ArrayList<>();
+            for (Product p : getCartItems()) {
+                OrderDetail detail = facade.newOrderDetailInstance();
 
-            for (ProductEntity p : getCartItems()) {
-                OrderDetailEntity detail = new OrderDetailEntity();
-
-                OrderDetailPKEntity pk = new OrderDetailPKEntity(order.getId(), p.getId());
+                OrderDetailPK pk = facade.createOrderDetailPK(order.getId(), p.getId());
                 //TODO: next version will handle qty on shoppingCart 
                 detail.setQty(1);
                 detail.setProduct(p);
@@ -141,12 +133,8 @@ public class ShoppingCart implements Serializable {
             }
 
             order.setOrderDetailList(details);
-            facade.updateCustomerOrder(order);
-
-            OrderEvent event = orderToEvent(order);
-
-            LOGGER.log(Level.FINEST, "{0} Sending event from ShoppingCart", Thread.currentThread().getName());
-            eventDispatcher.publish(event);
+            facade.updateNewOrder(order);
+            facade.processOrder(order.getId());
 
             JsfUtil.addSuccessMessage(JsfUtil.getStringFromBundle("bundles.Bundle", "Cart_Checkout_Success"));
             clear();
@@ -160,7 +148,7 @@ public class ShoppingCart implements Serializable {
         cartItems.clear();
     }
 
-    public List<ProductEntity> getCartItems() {
+    public List<Product> getCartItems() {
         return cartItems;
     }
 
@@ -168,15 +156,4 @@ public class ShoppingCart implements Serializable {
         return conversation;
     }
 
-    private OrderEvent orderToEvent(CustomerOrderEntity order) {
-        OrderEvent event = new OrderEvent();
-
-        event.setAmount(order.getAmount());
-        event.setCustomerID(order.getCustomer().getId());
-        event.setDateCreated(order.getDateCreated());
-        event.setStatusID(order.getOrderStatus().getId());
-        event.setOrderID(order.getId());
-
-        return event;
-    }
 }

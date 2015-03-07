@@ -6,11 +6,7 @@ import com.forest.model.CustomerOrder;
 
 public interface CustomerOrderManager {
 
-	public abstract void createCustomerOrder(CustomerOrder customerOrder);
-
 	public abstract CustomerOrder getCustomerOrder(Integer id);
-
-	public abstract void updateCustomerOrder(CustomerOrder customerOrder);
 
 	public abstract void removeCustomerOrder(CustomerOrder customerOrder);
 
@@ -25,5 +21,24 @@ public interface CustomerOrderManager {
 	public abstract List<CustomerOrder> getOrderByStatus(int status);
 
 	public abstract void setOrderStatus(int orderId, String newStatus);
+
+	public abstract void cancelCustomerOrder(int customerOrderId);
+
+	public abstract void shippingCanceled(int customerOrderId);
+
+	public abstract void orderShipped(int customerOrderId);
+
+	public abstract void itemsPacked(int customerOrderId);
+
+	public abstract void paymentCanceled(int customerOrderId);
+
+	public abstract void paymentReceived(int customerOrderId);
+
+	public abstract void processOrder(int customerOrderId);
+
+	public abstract void updateNewOrder(CustomerOrder customerOrder);
+
+	public abstract void openNewOrder(CustomerOrder customerOrder);
+
 
 }

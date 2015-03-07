@@ -7,21 +7,16 @@
  */
 package com.forest.handlers;
 
-import com.forest.ejb.OrderBean;
-import com.forest.events.OrderEvent;
-import com.forest.qualifiers.New;
-import com.forest.qualifiers.Paid;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestContext;
@@ -30,6 +25,10 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.DatatypeConverter;
+
+import com.forest.ejb.OrderBean;
+import com.forest.events.OrderEvent;
+import com.forest.qualifiers.New;
 
 /**
  * CDI event handler that calls Payment service for new orders. It will
@@ -46,9 +45,7 @@ public class PaymentHandler implements IOrderHandler, Serializable {
     private static final Logger logger = Logger.getLogger(PaymentHandler.class.getCanonicalName());
     private static final long serialVersionUID = 4979287107039479577L;
     private static final String ENDPOINT = "http://localhost:8080/dukes-payment/payment/pay";
-    @Inject
-    @Paid
-    Event<OrderEvent> eventManager;
+
     /**
      * Payment service endpoint
      */
@@ -63,13 +60,11 @@ public class PaymentHandler implements IOrderHandler, Serializable {
                 Thread.currentThread().getName());
 
         if (processPayment(event)) {
-            orderBean.setOrderStatus(event.getOrderID(),
-                    String.valueOf(OrderBean.Status.PENDING_PAYMENT.getStatus()));
+        	
+        	orderBean.paymentReceived(event.getOrderID());
             logger.info("Payment Approved");
-            eventManager.fire(event);
         } else {
-            orderBean.setOrderStatus(event.getOrderID(),
-                    String.valueOf(OrderBean.Status.CANCELLED_PAYMENT.getStatus()));
+        	orderBean.paymentCanceled(event.getOrderID());
             logger.info("Payment Denied");
         }
     }

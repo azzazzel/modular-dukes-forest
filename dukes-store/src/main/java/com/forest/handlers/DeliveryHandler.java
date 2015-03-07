@@ -17,9 +17,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Observes;
 
 import com.forest.ejb.OrderBean;
-import com.forest.ejb.OrderJMSManager;
 import com.forest.events.OrderEvent;
-import com.forest.model.CustomerOrder;
 import com.forest.qualifiers.Paid;
 
 /**
@@ -34,8 +32,7 @@ public class DeliveryHandler implements IOrderHandler, Serializable {
     
     @EJB 
     OrderBean orderBean;
-    @EJB
-    OrderJMSManager orderPublisher;
+
     
     @Override
     @Asynchronous
@@ -46,14 +43,8 @@ public class DeliveryHandler implements IOrderHandler, Serializable {
         try {           
             logger.log(Level.INFO, "Order #{0} has been paid in the amount of {1}. Order is now ready for delivery!", new Object[]{event.getOrderID(), event.getAmount()});
                                     
-            orderBean.setOrderStatus(event.getOrderID(), String.valueOf(OrderBean.Status.READY_TO_SHIP.getStatus()));
-            CustomerOrder order = orderBean.getCustomerOrder(event.getOrderID());
-            if (order != null) {
-                orderPublisher.sendMessage(order);
-               
-            } else {
-                throw new Exception("The order does not exist");
-            }
+            orderBean.itemsPacked(event.getOrderID());
+
         } catch (Exception jex) {
             logger.log(Level.SEVERE, null, jex);
         }
