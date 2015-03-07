@@ -27,6 +27,7 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.forest.events.OrderEvent;
 import com.forest.model.CustomerOrder;
 import com.forest.shipment.ejb.OrderBrowser;
 
@@ -69,47 +70,30 @@ public class ShippingBean implements Serializable {
         this.orders = orders;
     }
 
-    public enum Status {
-
-        PENDING_PAYMENT(2),
-        READY_TO_SHIP(3),
-        SHIPPED(4),
-        CANCELLED_PAYMENT(5),
-        CANCELLED_MANUAL(6);
-        private int status;
-
-        private Status(final int pStatus) {
-            status = pStatus;
-        }
-
-        public int getStatus() {
-            return status;
-        }
-    }
-
-    public String getEndpoint() {
+     public String getEndpoint() {
         return SERVICE_ENDPOINT;
     }
 
-    public List<CustomerOrder> listByStatus(final Status status) {
-        List<CustomerOrder> entity = (List<CustomerOrder>) client.target(SERVICE_ENDPOINT)
-                .queryParam("status", String.valueOf(status.getStatus()))
+    public List<OrderEvent> listByStatus(final int status) {
+        List<OrderEvent> entity = (List<OrderEvent>) client.target(SERVICE_ENDPOINT)
+                .queryParam("status", String.valueOf(status))
                 .request(MEDIA_TYPE)
-                .get(new GenericType<List<CustomerOrder>>() {
+                .get(new GenericType<List<OrderEvent>>() {
         });
 
+        
         return entity;
     }
 
-    public void updateOrderStatus(final String messageID, final Status status) {
+    public void updateOrderStatus(final String messageID, final String status) {
         // consume message
         CustomerOrder order = orderBrowser.processOrder(messageID);
 
         // call order service to update db in Store
         Response response = client.target(SERVICE_ENDPOINT)
-                .path("/" + order.getId())
+                .path("/shipping/" + order.getId())
                 .request(MEDIA_TYPE)
-                .put(Entity.text(String.valueOf(status.getStatus())));
+                .put(Entity.text(String.valueOf(status)));
 
         logger.log(Level.FINEST, "PUT Status response: {0}", response.getStatus());
     }
@@ -129,7 +113,7 @@ public class ShippingBean implements Serializable {
         }
     }
 
-    public List<CustomerOrder> getCompletedOrders() {
-        return listByStatus(Status.SHIPPED);
+    public List<OrderEvent> getCompletedOrders() {
+        return listByStatus(4);
     }
 }

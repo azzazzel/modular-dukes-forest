@@ -15,7 +15,6 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -38,8 +37,6 @@ public class UserController implements Serializable {
     
     private static final long serialVersionUID = -7440104826420270291L;
     
-    @Inject
-    ShippingBean adapter;
     
     Person user;
     @EJB
@@ -59,7 +56,7 @@ public class UserController implements Serializable {
             request.login(this.getUsername(), this.getPassword());
             
 
-            this.user = ejbFacade.getUserByEmail(getUsername());
+            this.user = ejbFacade.getPersonByEmail(getUsername());
             this.getAuthenticatedUser();
 
             if (isAdmin(user)) {

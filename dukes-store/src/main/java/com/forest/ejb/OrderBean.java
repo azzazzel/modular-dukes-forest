@@ -8,6 +8,7 @@
 package com.forest.ejb;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +26,7 @@ import javax.ws.rs.QueryParam;
 import com.forest.entity.CustomerOrderEntity;
 import com.forest.entity.OrderDetailEntity;
 import com.forest.entity.OrderDetailPKEntity;
+import com.forest.events.OrderEvent;
 import com.forest.model.CustomerOrder;
 import com.forest.model.OrderDetail;
 import com.forest.persitence.jpa.OrderPersistenceJPA;
@@ -117,8 +119,20 @@ public class OrderBean extends AbstractBaseCustomerOrderManager implements Seria
 
 	@GET
 	@Produces({ "application/xml", "application/json" })
-	public List<CustomerOrder> getOrderByStatus(@QueryParam("status") int status) {
-		return super.getOrderByStatus(status);
+	public List<OrderEvent> getOrderEventsByStatus(@QueryParam("status") int status) {
+		
+		List<OrderEvent> result = new LinkedList<OrderEvent>();
+		for (CustomerOrder customerOrder: super.getOrderByStatus(status)) {
+			OrderEvent orderEvent = new OrderEvent();
+			orderEvent.setAmount(customerOrder.getAmount());
+			orderEvent.setCustomerID(customerOrder.getCustomer().getId());
+			orderEvent.setDateCreated(customerOrder.getDateCreated());
+			orderEvent.setOrderID(customerOrder.getId());
+			orderEvent.setStatusID(customerOrder.getOrderStatus().getId());
+			result.add(orderEvent); 
+		}
+		
+		return result;
 	}
 
 	@PUT

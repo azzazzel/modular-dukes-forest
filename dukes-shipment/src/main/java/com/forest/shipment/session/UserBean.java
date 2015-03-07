@@ -7,38 +7,43 @@
  */
 package com.forest.shipment.session;
 
-import com.forest.entity.CustomerEntity;
-import com.forest.entity.PersonEntity;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+
+import com.forest.entity.CustomerEntity;
+import com.forest.model.Customer;
+import com.forest.persitence.jpa.PersonPersistenceJPA;
+import com.forest.usecase.identity.AbstractBasePersonManager;
+import com.forest.usecase.identity.persistence.PersonPersistence;
 
 /**
  *
  * @author markito
  */
 @Stateless
-public class UserBean extends AbstractFacade<CustomerEntity> {
-    
-    @PersistenceContext(unitName="forestPU")
-    private EntityManager em;
 
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
+public class UserBean extends AbstractBasePersonManager {
+
+    @PersistenceContext(unitName="forestPU")
+    private EntityManager entityManager;
     
-    public PersonEntity getUserByEmail(String email) {
-        Query createNamedQuery = getEntityManager().createNamedQuery("Person.findByEmail");
-        
-        createNamedQuery.setParameter("email", email);
-        
-        return (PersonEntity) createNamedQuery.getSingleResult();
-    }
+    private PersonPersistenceJPA personPersistance = new PersonPersistenceJPA();
     
-    public UserBean() {
-        super(CustomerEntity.class);
+    
+    @PostConstruct
+    public void init() {
+    	personPersistance.setEntityManager(entityManager);
     }
+
+    public Customer newCustomerInstance() {
+    	return new CustomerEntity();
+	}
+
+	@Override
+	protected PersonPersistence getPersonPersistence() {
+		return personPersistance;
+	}
 
 }

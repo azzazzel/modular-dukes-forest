@@ -26,7 +26,8 @@ public class OrderEvent implements Serializable {
     private double amount;
     private Date dateCreated;
     private int customerID;
-    private int orderID;
+    private String customerName;
+	private int orderID;
     private int statusID;
     
     public int getCustomerID() {
@@ -68,6 +69,14 @@ public class OrderEvent implements Serializable {
     public void setAmount(double amount) {
         this.amount = amount;
     }
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
 
     public String toString() {
         return "[OrderEvent] " + getCustomerID();

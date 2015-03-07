@@ -57,7 +57,7 @@
 
                                         <div id="option"> 
                                             <h:commandButton value="Approve" action="#{shippingBean.updateOrderStatus(key, 'SHIPPED')}" />
-                                            <h:commandButton value="Deny" action="#{shippingBean.updateOrderStatus(key, 'CANCELLED_MANUAL')}" />
+                                            <h:commandButton value="Deny" action="#{shippingBean.updateOrderStatus(key, 'CANCELLED')}" />
                                         </div>
                                     </li>
                                 </h:column>
@@ -74,10 +74,10 @@
                             <h:column>
                                 <li>
                                     <h:outputLabel for="id" value="#{bundle.ViewCustomerOrderLabel_id} "/>
-                                    <h:outputText id="id" value="#{item.id}"/><br />
+                                    <h:outputText id="id" value="#{item.orderID}"/><br />
 
                                     <h:outputLabel for="customer" value="#{bundle.ViewCustomerLabel_name}"/>
-                                    <h:outputText id="customer" value="#{item.customer.firstname} #{item.customer.lastname}"/><br />
+                                    <h:outputText id="customer" value="#{item.customerName}"/><br />
 
                                     <h:outputLabel for="total" value="#{bundle.ViewCustomerOrderLabel_amount}"/>
                                     <h:outputText id="total" value="#{item.amount}">
