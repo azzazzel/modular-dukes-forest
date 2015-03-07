@@ -7,13 +7,9 @@
  */
 package com.forest.web;
 
-import com.forest.ejb.AdministratorBean;
-import com.forest.entity.AdministratorEntity;
-import com.forest.web.util.AbstractPaginationHelper;
-import com.forest.web.util.JsfUtil;
-import com.forest.web.util.PageNavigation;
 import java.io.Serializable;
 import java.util.ResourceBundle;
+
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
@@ -25,6 +21,12 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
+import com.forest.ejb.AdministratorBean;
+import com.forest.model.Administrator;
+import com.forest.web.util.AbstractPaginationHelper;
+import com.forest.web.util.JsfUtil;
+import com.forest.web.util.PageNavigation;
+
 @Named(value = "administratorController")
 @SessionScoped
 public class AdministratorController implements Serializable {
@@ -32,7 +34,7 @@ public class AdministratorController implements Serializable {
     private static final String BUNDLE = "bundles.Bundle";
     private static final long serialVersionUID = -2691147357609941284L;
 
-    private AdministratorEntity current;
+    private Administrator current;
     private DataModel items = null;
     @EJB
     private com.forest.ejb.AdministratorBean ejbFacade;
@@ -43,9 +45,9 @@ public class AdministratorController implements Serializable {
     public AdministratorController() {
     }
 
-    public AdministratorEntity getSelected() {
+    public Administrator getSelected() {
         if (current == null) {
-            current = new AdministratorEntity();
+            current = ejbFacade.newAdministratorInstance();
             selectedItemIndex = -1;
         }
         return current;
@@ -66,7 +68,7 @@ public class AdministratorController implements Serializable {
 
                 @Override
                 public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().findRange(new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    return new ListDataModel(getFacade().getAllInRange(new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
                 }
             };
         }
@@ -79,20 +81,20 @@ public class AdministratorController implements Serializable {
     }
 
     public PageNavigation prepareView() {
-        current = (AdministratorEntity) getItems().getRowData();
+        current = (Administrator) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.VIEW;
     }
 
     public PageNavigation prepareCreate() {
-        current = new AdministratorEntity();
+        current = ejbFacade.newAdministratorInstance();
         selectedItemIndex = -1;
         return PageNavigation.CREATE;
     }
 
     public PageNavigation create() {
         try {
-            getFacade().create(current);
+            getFacade().createAdministrator(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE).getString("AdministratorCreated"));
             return prepareCreate();
         } catch (Exception e) {
@@ -102,14 +104,14 @@ public class AdministratorController implements Serializable {
     }
 
     public PageNavigation prepareEdit() {
-        current = (AdministratorEntity) getItems().getRowData();
+        current = (Administrator) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return PageNavigation.EDIT;
     }
 
     public PageNavigation update() {
         try {
-            getFacade().edit(current);
+            getFacade().updateAdministrator(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE).getString("AdministratorUpdated"));
             return PageNavigation.VIEW;
         } catch (Exception e) {
@@ -119,7 +121,7 @@ public class AdministratorController implements Serializable {
     }
 
     public PageNavigation destroy() {
-        current = (AdministratorEntity) getItems().getRowData();
+        current = (Administrator) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -141,7 +143,7 @@ public class AdministratorController implements Serializable {
 
     private void performDestroy() {
         try {
-            getFacade().remove(current);
+            getFacade().removeAdministrator(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE).getString("AdministratorDeleted"));
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE).getString("PersistenceErrorOccured"));
@@ -159,7 +161,7 @@ public class AdministratorController implements Serializable {
             }
         }
         if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
+            current = getFacade().getAllInRange(selectedItemIndex, selectedItemIndex + 1).get(0);
         }
     }
 
@@ -187,14 +189,14 @@ public class AdministratorController implements Serializable {
     }
 
     public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(ejbFacade.findAll(), false);
+        return JsfUtil.getSelectItems(ejbFacade.getAll(), false);
     }
 
     public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(ejbFacade.findAll(), true);
+        return JsfUtil.getSelectItems(ejbFacade.getAll(), true);
     }
 
-    @FacesConverter(forClass = AdministratorEntity.class)
+    @FacesConverter(forClass = Administrator.class)
     public static class AdministratorControllerConverter implements Converter {
 
         @Override
@@ -204,7 +206,7 @@ public class AdministratorController implements Serializable {
             }
             AdministratorController controller = (AdministratorController) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "administratorController");
-            return controller.ejbFacade.find(getKey(value));
+            return controller.ejbFacade.getAdministrator(getKey(value));
         }
 
         java.lang.Integer getKey(String value) {
@@ -224,8 +226,8 @@ public class AdministratorController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof AdministratorEntity) {
-                AdministratorEntity o = (AdministratorEntity) object;
+            if (object instanceof Administrator) {
+                Administrator o = (Administrator) object;
                 return getStringKey(o.getId());
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + AdministratorController.class.getName());

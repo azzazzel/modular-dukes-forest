@@ -7,9 +7,9 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.CustomerOrderEntity;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -20,6 +20,8 @@ import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.QueueBrowser;
+
+import com.forest.model.CustomerOrder;
 
 @JMSDestinationDefinition(
         name = "java:global/jms/OrderQueue",
@@ -36,7 +38,7 @@ public class OrderJMSManager {
     private Queue queue;
     private QueueBrowser browser;
 
-    public void sendMessage(CustomerOrderEntity customerOrder) {
+    public void sendMessage(CustomerOrder customerOrder) {
         ObjectMessage msgObj = context.createObjectMessage();
 
         try {
@@ -53,7 +55,7 @@ public class OrderJMSManager {
         
         JMSConsumer consumer = context.createConsumer(queue, "OrderID='" + orderID + "'") ;
         
-        CustomerOrderEntity order = consumer.receiveBody(CustomerOrderEntity.class, 1);
+        CustomerOrder order = consumer.receiveBody(CustomerOrder.class, 1);
         
         if (order != null)
             logger.log(Level.INFO, "Order {0} removed from queue.", order.getId());

@@ -24,11 +24,11 @@ import com.forest.entity.CustomerOrderEntity;
 import com.forest.entity.OrderDetailEntity;
 import com.forest.entity.OrderDetailPKEntity;
 import com.forest.entity.OrderStatusEntity;
-import com.forest.entity.PersonEntity;
 import com.forest.entity.ProductEntity;
 import com.forest.events.OrderEvent;
 import com.forest.model.Group;
 import com.forest.model.OrderDetail;
+import com.forest.model.Person;
 import com.forest.qualifiers.LoggedIn;
 import com.forest.web.util.JsfUtil;
 import com.forest.web.util.PageNavigation;
@@ -44,7 +44,7 @@ public class ShoppingCart implements Serializable {
     OrderBean facade;
     @Inject
     @LoggedIn
-    PersonEntity user;
+    Person user;
     private static final Logger LOGGER = Logger.getLogger(ShoppingCart.class.getCanonicalName());
     private List<ProductEntity> cartItems;
     @EJB

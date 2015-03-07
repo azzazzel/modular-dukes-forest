@@ -7,18 +7,20 @@
  */
 package com.forest.handlers;
 
-import com.forest.ejb.OrderBean;
-import com.forest.ejb.OrderJMSManager;
-import com.forest.entity.CustomerOrderEntity;
-import com.forest.events.OrderEvent;
-import com.forest.qualifiers.Paid;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Observes;
+
+import com.forest.ejb.OrderBean;
+import com.forest.ejb.OrderJMSManager;
+import com.forest.events.OrderEvent;
+import com.forest.model.CustomerOrder;
+import com.forest.qualifiers.Paid;
 
 /**
  *
@@ -45,7 +47,7 @@ public class DeliveryHandler implements IOrderHandler, Serializable {
             logger.log(Level.INFO, "Order #{0} has been paid in the amount of {1}. Order is now ready for delivery!", new Object[]{event.getOrderID(), event.getAmount()});
                                     
             orderBean.setOrderStatus(event.getOrderID(), String.valueOf(OrderBean.Status.READY_TO_SHIP.getStatus()));
-            CustomerOrderEntity order = orderBean.getOrderById(event.getOrderID());
+            CustomerOrder order = orderBean.getCustomerOrder(event.getOrderID());
             if (order != null) {
                 orderPublisher.sendMessage(order);
                

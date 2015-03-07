@@ -7,13 +7,10 @@
  */
 package com.forest.web;
 
-import com.forest.entity.GroupsEntity;
-import com.forest.entity.PersonEntity;
-import com.forest.qualifiers.LoggedIn;
-import com.forest.web.util.JsfUtil;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
@@ -23,6 +20,11 @@ import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import com.forest.model.Group;
+import com.forest.model.Person;
+import com.forest.qualifiers.LoggedIn;
+import com.forest.web.util.JsfUtil;
 
 /**
  *
@@ -35,7 +37,7 @@ public class UserController implements Serializable {
     private static final String BUNDLE = "bundles.Bundle";
     private static final long serialVersionUID = -8851462237612818158L;
 
-    PersonEntity user;
+    Person user;
     @EJB
     private com.forest.ejb.UserBean ejbFacade;
     private String username;
@@ -63,7 +65,7 @@ public class UserController implements Serializable {
 
             JsfUtil.addSuccessMessage(JsfUtil.getStringFromBundle(BUNDLE, "Login_Success"));
 
-            this.user = ejbFacade.getUserByEmail(getUsername());
+            this.user = ejbFacade.getPersonByEmail(getUsername());
             this.getAuthenticatedUser();
 
             if (isAdmin()) {
@@ -113,7 +115,7 @@ public class UserController implements Serializable {
 
     public @Produces
     @LoggedIn
-    PersonEntity getAuthenticatedUser() {
+    Person getAuthenticatedUser() {
         return user;
     }
 
@@ -122,7 +124,7 @@ public class UserController implements Serializable {
     }
 
     public boolean isAdmin() {
-        for (GroupsEntity g : user.getGroupsList()) {
+        for (Group g : user.getGroupsList()) {
             if (g.getName().equals("ADMINS")) {
                 return true;
             }
@@ -169,7 +171,7 @@ public class UserController implements Serializable {
     /**
      * @return the user
      */
-    public PersonEntity getUser() {
+    public Person getUser() {
         return user;
     }
 }

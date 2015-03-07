@@ -7,14 +7,14 @@
  */
 package com.forest.shipment.web;
 
-import com.forest.entity.CustomerOrderEntity;
-import com.forest.shipment.ejb.OrderBrowser;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
@@ -26,6 +26,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.forest.model.CustomerOrder;
+import com.forest.shipment.ejb.OrderBrowser;
 
 @Named
 @RequestScoped
@@ -50,19 +53,19 @@ public class ShippingBean implements Serializable {
     private void clean() {
         client.close();
     }
-    private Map<String, CustomerOrderEntity> orders;
+    private Map<String, CustomerOrder> orders;
 
     /**
      * @return the orders
      */
-    public Map<String, CustomerOrderEntity> getOrders() {
+    public Map<String, CustomerOrder> getOrders() {
         return orders;
     }
 
     /**
      * @param orders the orders to set
      */
-    public void setOrders(Map<String, CustomerOrderEntity> orders) {
+    public void setOrders(Map<String, CustomerOrder> orders) {
         this.orders = orders;
     }
 
@@ -88,11 +91,11 @@ public class ShippingBean implements Serializable {
         return SERVICE_ENDPOINT;
     }
 
-    public List<CustomerOrderEntity> listByStatus(final Status status) {
-        List<CustomerOrderEntity> entity = (List<CustomerOrderEntity>) client.target(SERVICE_ENDPOINT)
+    public List<CustomerOrder> listByStatus(final Status status) {
+        List<CustomerOrder> entity = (List<CustomerOrder>) client.target(SERVICE_ENDPOINT)
                 .queryParam("status", String.valueOf(status.getStatus()))
                 .request(MEDIA_TYPE)
-                .get(new GenericType<List<CustomerOrderEntity>>() {
+                .get(new GenericType<List<CustomerOrder>>() {
         });
 
         return entity;
@@ -100,7 +103,7 @@ public class ShippingBean implements Serializable {
 
     public void updateOrderStatus(final String messageID, final Status status) {
         // consume message
-        CustomerOrderEntity order = orderBrowser.processOrder(messageID);
+        CustomerOrder order = orderBrowser.processOrder(messageID);
 
         // call order service to update db in Store
         Response response = client.target(SERVICE_ENDPOINT)
@@ -115,7 +118,7 @@ public class ShippingBean implements Serializable {
      * @return the orders
      */
     public List<String> getPendingOrders() {
-        Map<String, CustomerOrderEntity> pendingOrders = orderBrowser.getOrders();
+        Map<String, CustomerOrder> pendingOrders = orderBrowser.getOrders();
 
         if (pendingOrders == null) {
             return null;
@@ -126,7 +129,7 @@ public class ShippingBean implements Serializable {
         }
     }
 
-    public List<CustomerOrderEntity> getCompletedOrders() {
+    public List<CustomerOrder> getCompletedOrders() {
         return listByStatus(Status.SHIPPED);
     }
 }

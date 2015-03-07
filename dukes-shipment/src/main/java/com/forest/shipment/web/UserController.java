@@ -7,14 +7,10 @@
  */
 package com.forest.shipment.web;
 
-import com.forest.entity.GroupsEntity;
-import com.forest.entity.PersonEntity;
-import com.forest.qualifiers.LoggedIn;
-import com.forest.shipment.session.UserBean;
-import com.forest.shipment.web.util.JsfUtil;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
@@ -24,6 +20,12 @@ import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import com.forest.model.Group;
+import com.forest.model.Person;
+import com.forest.qualifiers.LoggedIn;
+import com.forest.shipment.session.UserBean;
+import com.forest.shipment.web.util.JsfUtil;
 
 /**
  * UserController is an authorization controller responsible 
@@ -39,7 +41,7 @@ public class UserController implements Serializable {
     @Inject
     ShippingBean adapter;
     
-    PersonEntity user;
+    Person user;
     @EJB
     private UserBean ejbFacade;
     private String username;
@@ -80,8 +82,8 @@ public class UserController implements Serializable {
         return result;
     }
     
-    public boolean isAdmin(PersonEntity user) {   
-        for (GroupsEntity g : user.getGroupsList()) {
+    public boolean isAdmin(Person user) {   
+        for (Group g : user.getGroupsList()) {
                 if (g.getName().equals("ADMINS")) {
                     return true;
                 }
@@ -118,7 +120,7 @@ public class UserController implements Serializable {
 
     public @Produces
     @LoggedIn
-    PersonEntity getAuthenticatedUser() {
+    Person getAuthenticatedUser() {
         return user;
     }
 
@@ -157,7 +159,7 @@ public class UserController implements Serializable {
     /**
      * @return the user
      */
-    public PersonEntity getUser() {
+    public Person getUser() {
         return user;
     }
 }

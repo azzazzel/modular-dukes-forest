@@ -7,20 +7,22 @@
  */
 package com.forest.web.util;
 
-import com.forest.ejb.ProductBean;
-import com.forest.entity.ProductEntity;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.forest.ejb.ProductBean;
+import com.forest.model.Product;
 
 /**
  * Image servlet based on BalusC (@link below) implementation
@@ -68,7 +70,7 @@ public class ImageServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND); // 404.
             return;
         }
-        ProductEntity p = productBean.find(Integer.parseInt(requestedImage));
+        Product p = productBean.getProduct(Integer.parseInt(requestedImage));
 
         if ((p == null) || (p.getImgSrc() == null)) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND); // 404.

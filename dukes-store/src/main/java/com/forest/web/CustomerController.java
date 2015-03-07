@@ -7,18 +7,11 @@
  */
 package com.forest.web;
 
-import com.forest.ejb.UserBean;
-import com.forest.entity.CustomerEntity;
-import com.forest.entity.PersonEntity;
-import com.forest.qualifiers.LoggedIn;
-import com.forest.web.util.JsfUtil;
-import com.forest.web.util.MD5Util;
-import com.forest.web.util.AbstractPaginationHelper;
-import com.forest.web.util.PageNavigation;
 import java.io.Serializable;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
@@ -31,244 +24,276 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.forest.ejb.UserBean;
+import com.forest.model.Customer;
+import com.forest.model.Person;
+import com.forest.qualifiers.LoggedIn;
+import com.forest.web.util.AbstractPaginationHelper;
+import com.forest.web.util.JsfUtil;
+import com.forest.web.util.MD5Util;
+import com.forest.web.util.PageNavigation;
+
 @Named(value = "customerController")
 @SessionScoped
 public class CustomerController implements Serializable {
-    
-    private static final String BUNDLE = "bundles.Bundle";
-    private static final long serialVersionUID = 2081269066939259737L;
 
-    @Inject
-    @LoggedIn
-    PersonEntity authenticated;
-    private CustomerEntity current;
-    private DataModel items = null;
-    @EJB
-    private com.forest.ejb.UserBean ejbFacade;
-                
-    private static final Logger logger = Logger.getLogger(CustomerController.class.getCanonicalName());
-    
-    private AbstractPaginationHelper pagination;
-    private int selectedItemIndex;
+	private static final String BUNDLE = "bundles.Bundle";
+	private static final long serialVersionUID = 2081269066939259737L;
 
-    public CustomerController() {
-    }
+	@Inject
+	@LoggedIn
+	Person authenticated;
+	private Customer current;
+	private DataModel items = null;
+	@EJB
+	private com.forest.ejb.UserBean ejbFacade;
 
-    public CustomerEntity getSelected() {
-        if (current == null) {
-            current = new CustomerEntity();
-            selectedItemIndex = -1;
-        }
-        return current;
-    }
+	private static final Logger logger = Logger
+			.getLogger(CustomerController.class.getCanonicalName());
 
-    private UserBean getFacade() {
-        return ejbFacade;
-    }
+	private AbstractPaginationHelper pagination;
+	private int selectedItemIndex;
 
-    public AbstractPaginationHelper getPagination() {
-        if (pagination == null) {
-            pagination = new AbstractPaginationHelper(AbstractPaginationHelper.DEFAULT_SIZE) {
+	public CustomerController() {
+	}
 
-                @Override
-                public int getItemsCount() {
-                    return getFacade().count();
-                }
+	public Customer getSelected() {
+		if (current == null) {
+			current = ejbFacade.newCustomerInstance();
+			selectedItemIndex = -1;
+		}
+		return current;
+	}
 
-                @Override
-                public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().findRange(new int[]{getPageFirstItem(), 
-                        getPageFirstItem() + getPageSize()}));
-                    //return new ListDataModel(getFacade().findAll());
-                }
-            };
-        }
-        return pagination;
-    }
+	private UserBean getFacade() {
+		return ejbFacade;
+	}
 
-    public PageNavigation prepareList() {
-        recreateModel();
-        return PageNavigation.LIST;
-    }
+	public AbstractPaginationHelper getPagination() {
+		if (pagination == null) {
+			pagination = new AbstractPaginationHelper(
+					AbstractPaginationHelper.DEFAULT_SIZE) {
 
-    public PageNavigation prepareView() {
-        current     = (CustomerEntity) getItems().getRowData();
-        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        return PageNavigation.VIEW;
-    }
+				@Override
+				public int getItemsCount() {
+					return getFacade().count();
+				}
 
-    public PageNavigation prepareCreate() {
-        current = new CustomerEntity();
-        selectedItemIndex = -1;
-        return PageNavigation.CREATE;
-    }
+				@Override
+				public DataModel createPageDataModel() {
+					return new ListDataModel(getFacade().getAllInRange(
+							getPageFirstItem(),
+							getPageFirstItem() + getPageSize()));
+					// return new ListDataModel(getFacade().findAll());
+				}
+			};
+		}
+		return pagination;
+	}
 
-    private boolean isUserDuplicated(PersonEntity p) {
-        return (getFacade().getUserByEmail(p.getEmail()) == null) ? false : true;
-    }
+	public PageNavigation prepareList() {
+		recreateModel();
+		return PageNavigation.LIST;
+	}
 
-    public PageNavigation create() {
-        try {
-            if (!isUserDuplicated(current)) {
-                // password encrypt
-                current.setPassword(MD5Util.generateMD5(current.getPassword()));
-                getFacade().createUser(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE).getString("CustomerCreated"));
+	public PageNavigation prepareView() {
+		current = (Customer) getItems().getRowData();
+		selectedItemIndex = pagination.getPageFirstItem()
+				+ getItems().getRowIndex();
+		return PageNavigation.VIEW;
+	}
 
-            } else {
-                JsfUtil.addErrorMessage(ResourceBundle.getBundle(BUNDLE).getString("DuplicatedCustomerError"));
+	public PageNavigation prepareCreate() {
+		current = ejbFacade.newCustomerInstance();
+		selectedItemIndex = -1;
+		return PageNavigation.CREATE;
+	}
 
-            }
-            //return prepareCreate();
-            return PageNavigation.INDEX;
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE).getString("CustomerCreationError"));
-            return null;
-        }
-    }
+	private boolean isUserDuplicated(Person p) {
+		return (getFacade().getPersonByEmail(p.getEmail()) == null) ? false
+				: true;
+	}
 
-    public PageNavigation prepareEdit() {
-        current = (CustomerEntity) getItems().getRowData();
-        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        return PageNavigation.EDIT;
-    }
+	public PageNavigation create() {
+		try {
+			if (!isUserDuplicated(current)) {
+				// password encrypt
+				current.setPassword(MD5Util.generateMD5(current.getPassword()));
+				getFacade().createPerson(current);
+				JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE)
+						.getString("CustomerCreated"));
 
-    public PageNavigation update() {
-        try {
-            logger.log(Level.INFO, "Updating customer ID:{0}", current.getId());
-            getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE).getString("CustomerUpdated"));
-            return PageNavigation.VIEW;
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE).getString("PersistenceErrorOccured"));
-            return null;
-        }
-    }
+			} else {
+				JsfUtil.addErrorMessage(ResourceBundle.getBundle(BUNDLE)
+						.getString("DuplicatedCustomerError"));
 
-    public PageNavigation destroy() {
-        current = (CustomerEntity) getItems().getRowData();
-        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        performDestroy();
-        recreateModel();
-        return PageNavigation.LIST;
-    }
+			}
+			// return prepareCreate();
+			return PageNavigation.INDEX;
+		} catch (Exception e) {
+			JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE)
+					.getString("CustomerCreationError"));
+			return null;
+		}
+	}
 
-    public PageNavigation destroyAndView() {
-        performDestroy();
-        recreateModel();
-        updateCurrentItem();
-        if (selectedItemIndex >= 0) {
-            return PageNavigation.VIEW;
-        } else {
-            // all items were removed - go back to list
-            recreateModel();
-            return PageNavigation.LIST;
-        }
-    }
+	public PageNavigation prepareEdit() {
+		current = (Customer) getItems().getRowData();
+		selectedItemIndex = pagination.getPageFirstItem()
+				+ getItems().getRowIndex();
+		return PageNavigation.EDIT;
+	}
 
-    private void performDestroy() {
-        try {
-            getFacade().remove(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE).getString("CustomerDeleted"));
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE).getString("PersistenceErrorOccured"));
-        }
-    }
+	public PageNavigation update() {
+		try {
+			logger.log(Level.INFO, "Updating customer ID:{0}", current.getId());
+			getFacade().updatePerson(current);
+			JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE)
+					.getString("CustomerUpdated"));
+			return PageNavigation.VIEW;
+		} catch (Exception e) {
+			JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE)
+					.getString("PersistenceErrorOccured"));
+			return null;
+		}
+	}
 
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-            // go to previous page if last page disappeared:
-            if (pagination.getPageFirstItem() >= count) {
-                pagination.previousPage();
-            }
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }
+	public PageNavigation destroy() {
+		current = (Customer) getItems().getRowData();
+		selectedItemIndex = pagination.getPageFirstItem()
+				+ getItems().getRowIndex();
+		performDestroy();
+		recreateModel();
+		return PageNavigation.LIST;
+	}
 
-    public DataModel getItems() {
-        if (items == null) {
-            items = getPagination().createPageDataModel();
-        }
-        return items;
-    }
+	public PageNavigation destroyAndView() {
+		performDestroy();
+		recreateModel();
+		updateCurrentItem();
+		if (selectedItemIndex >= 0) {
+			return PageNavigation.VIEW;
+		} else {
+			// all items were removed - go back to list
+			recreateModel();
+			return PageNavigation.LIST;
+		}
+	}
 
-    private void recreateModel() {
-        items = null;
-    }
+	private void performDestroy() {
+		try {
+			getFacade().removePerson(current);
+			JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE)
+					.getString("CustomerDeleted"));
+		} catch (Exception e) {
+			JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE)
+					.getString("PersistenceErrorOccured"));
+		}
+	}
 
-    public PageNavigation next() {
-        getPagination().nextPage();
-        recreateModel();
-        return PageNavigation.LIST;
-    }
+	private void updateCurrentItem() {
+		int count = getFacade().count();
+		if (selectedItemIndex >= count) {
+			// selected index cannot be bigger than number of items:
+			selectedItemIndex = count - 1;
+			// go to previous page if last page disappeared:
+			if (pagination.getPageFirstItem() >= count) {
+				pagination.previousPage();
+			}
+		}
+		if (selectedItemIndex >= 0) {
+			current = (Customer) getFacade().getAllInRange (selectedItemIndex,
+					selectedItemIndex + 1).get(0);
+		}
+	}
 
-    public PageNavigation previous() {
-        getPagination().previousPage();
-        recreateModel();
-        return PageNavigation.LIST;
-    }
+	public DataModel getItems() {
+		if (items == null) {
+			items = getPagination().createPageDataModel();
+		}
+		return items;
+	}
 
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(ejbFacade.findAll(), false);
-    }
+	private void recreateModel() {
+		items = null;
+	}
 
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(ejbFacade.findAll(), true);
-    }
+	public PageNavigation next() {
+		getPagination().nextPage();
+		recreateModel();
+		return PageNavigation.LIST;
+	}
 
-    @FacesConverter(forClass = CustomerEntity.class)
-    public static class CustomerControllerConverter implements Converter {
+	public PageNavigation previous() {
+		getPagination().previousPage();
+		recreateModel();
+		return PageNavigation.LIST;
+	}
 
-        @Override
-        public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
-            if (value == null || value.length() == 0) {
-                return null;
-            }
-            CustomerController controller = (CustomerController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "customerController");
-            return controller.ejbFacade.find(getKey(value));
-        }
+	public SelectItem[] getItemsAvailableSelectMany() {
+		return JsfUtil.getSelectItems(ejbFacade.getAll(), false);
+	}
 
-        java.lang.Integer getKey(String value) {
-            java.lang.Integer key;
-            key = Integer.valueOf(value);
-            return key;
-        }
+	public SelectItem[] getItemsAvailableSelectOne() {
+		return JsfUtil.getSelectItems(ejbFacade.getAll(), true);
+	}
 
-        String getStringKey(java.lang.Integer value) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(value);
-            return sb.toString();
-        }
+	@FacesConverter(forClass = Customer.class)
+	public static class CustomerControllerConverter implements Converter {
 
-        @Override
-        public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
-            if (object == null) {
-                return null;
-            }
-            if (object instanceof CustomerEntity) {
-                CustomerEntity o = (CustomerEntity) object;
-                return getStringKey(o.getId());
-            } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + CustomerController.class.getName());
-            }
-        }
-    }
+		@Override
+		public Object getAsObject(FacesContext facesContext,
+				UIComponent component, String value) {
+			if (value == null || value.length() == 0) {
+				return null;
+			}
+			CustomerController controller = (CustomerController) facesContext
+					.getApplication()
+					.getELResolver()
+					.getValue(facesContext.getELContext(), null,
+							"customerController");
+			return controller.ejbFacade.getPerson(getKey(value));
+		}
 
-    public void setCustomer(CustomerEntity user) {
-        this.authenticated = user;
-    }
+		java.lang.Integer getKey(String value) {
+			java.lang.Integer key;
+			key = Integer.valueOf(value);
+			return key;
+		}
 
-    public PersonEntity getAuthenticated() {
-        return authenticated;
-    }
-    
-    public void setAuthenticated(PersonEntity p) {
-        this.authenticated = p;
-    }
+		String getStringKey(java.lang.Integer value) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(value);
+			return sb.toString();
+		}
+
+		@Override
+		public String getAsString(FacesContext facesContext,
+				UIComponent component, Object object) {
+			if (object == null) {
+				return null;
+			}
+			if (object instanceof Customer) {
+				Customer o = (Customer) object;
+				return getStringKey(o.getId());
+			} else {
+				throw new IllegalArgumentException("object " + object
+						+ " is of type " + object.getClass().getName()
+						+ "; expected type: "
+						+ CustomerController.class.getName());
+			}
+		}
+	}
+
+	public void setCustomer(Customer user) {
+		this.authenticated = user;
+	}
+
+	public Person getAuthenticated() {
+		return authenticated;
+	}
+
+	public void setAuthenticated(Person p) {
+		this.authenticated = p;
+	}
 }

@@ -7,12 +7,12 @@
  */
 package com.forest.shipment.ejb;
 
-import com.forest.entity.CustomerOrderEntity;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -22,6 +22,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.QueueBrowser;
+
+import com.forest.model.CustomerOrder;
 
 @Stateless
 public class OrderBrowser {
@@ -33,7 +35,7 @@ public class OrderBrowser {
     private Queue queue;
     private QueueBrowser browser;
 
-    public Map<String, CustomerOrderEntity> getOrders() {
+    public Map<String, CustomerOrder> getOrders() {
         browser = context.createBrowser(queue);
         Enumeration msgs;
         try {
@@ -43,12 +45,12 @@ public class OrderBrowser {
                 logger.log(Level.INFO, "No messages on the queue!");
             } else {
 
-                Map<String, CustomerOrderEntity> result = new LinkedHashMap<>();
+                Map<String, CustomerOrder> result = new LinkedHashMap<>();
                 while (msgs.hasMoreElements()) {
                     Message msg = (Message) msgs.nextElement();
 
                     logger.log(Level.INFO, "Message ID: {0}", msg.getJMSMessageID());
-                    CustomerOrderEntity order = msg.getBody(CustomerOrderEntity.class);
+                    CustomerOrder order = msg.getBody(CustomerOrder.class);
                     result.put(msg.getJMSMessageID(), order);
                 }
                 return result;
@@ -60,12 +62,12 @@ public class OrderBrowser {
         return null;
     }
 
-    public CustomerOrderEntity processOrder(String OrderMessageID) {
+    public CustomerOrder processOrder(String OrderMessageID) {
 
         logger.log(Level.INFO, "Processing Order {0}", OrderMessageID);
         JMSConsumer consumer = context.createConsumer(queue, "JMSMessageID='" + OrderMessageID + "'");
 
-        CustomerOrderEntity order = consumer.receiveBody(CustomerOrderEntity.class, 1);
+        CustomerOrder order = consumer.receiveBody(CustomerOrder.class, 1);
         return order;
     }
 }

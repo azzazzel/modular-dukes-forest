@@ -7,11 +7,6 @@
  */
 package com.forest.web;
 
-import com.forest.ejb.ProductBean;
-import com.forest.entity.ProductEntity;
-import com.forest.web.util.AbstractPaginationHelper;
-import com.forest.web.util.JsfUtil;
-import com.forest.web.util.PageNavigation;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,6 +14,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
@@ -31,352 +27,385 @@ import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.servlet.http.Part;
 
+import com.forest.ejb.ProductBean;
+import com.forest.model.Product;
+import com.forest.web.util.AbstractPaginationHelper;
+import com.forest.web.util.JsfUtil;
+import com.forest.web.util.PageNavigation;
+
 @Named(value = "productController")
 @SessionScoped
 public class ProductController implements Serializable {
 
-    private final static Logger logger = Logger.getLogger(ProductController.class.getCanonicalName());
-    private static final String BUNDLE = "bundles.Bundle";
-    private static final long serialVersionUID = -1835103655519682074L;
-    private ProductEntity current;
-    private DataModel items = null;
-    @EJB
-    private com.forest.ejb.ProductBean ejbFacade;
-    private AbstractPaginationHelper pagination;
-    private int selectedItemIndex;
-    // used for wizard
-    private int step = 1;
-    private int categoryId;
-    
-    private Part filePart;
-    
-    private static final List<String> EXTENSIONS_ALLOWED = new ArrayList<>();
+	private final static Logger logger = Logger
+			.getLogger(ProductController.class.getCanonicalName());
+	private static final String BUNDLE = "bundles.Bundle";
+	private static final long serialVersionUID = -1835103655519682074L;
+	private Product current;
+	private DataModel items = null;
+	@EJB
+	private com.forest.ejb.ProductBean ejbFacade;
+	private AbstractPaginationHelper pagination;
+	private int selectedItemIndex;
+	// used for wizard
+	private int step = 1;
+	private int categoryId;
 
-    static {
-        // images only
-        EXTENSIONS_ALLOWED.add(".jpg");
-        EXTENSIONS_ALLOWED.add(".bmp");
-        EXTENSIONS_ALLOWED.add(".png");
-        EXTENSIONS_ALLOWED.add(".gif");
-    }
+	private Part filePart;
 
-    private String getFileName(Part part) {
-        String partHeader = part.getHeader("content-disposition");
-        logger.log(Level.INFO, "Part Header = {0}", partHeader);
-        for (String cd : part.getHeader("content-disposition").split(";")) {
-            if (cd.trim().startsWith("filename")) {
-                return cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
-            }
-        }
-        return null;
+	private static final List<String> EXTENSIONS_ALLOWED = new ArrayList<>();
 
-    }
+	static {
+		// images only
+		EXTENSIONS_ALLOWED.add(".jpg");
+		EXTENSIONS_ALLOWED.add(".bmp");
+		EXTENSIONS_ALLOWED.add(".png");
+		EXTENSIONS_ALLOWED.add(".gif");
+	}
 
-    
-    public void upload() {
-        logger.info(getFilePart().getName());
+	private String getFileName(Part part) {
+		String partHeader = part.getHeader("content-disposition");
+		logger.log(Level.INFO, "Part Header = {0}", partHeader);
+		for (String cd : part.getHeader("content-disposition").split(";")) {
+			if (cd.trim().startsWith("filename")) {
+				return cd.substring(cd.indexOf('=') + 1).trim()
+						.replace("\"", "");
+			}
+		}
+		return null;
 
-        try {
-            InputStream is = getFilePart().getInputStream();
+	}
 
-            int i = is.available();
-            byte[] b = new byte[i];
-            is.read(b);
+	public void upload() {
+		logger.info(getFilePart().getName());
 
-            logger.log(Level.INFO, "Length : {0}", b.length);
-            String fileName = getFileName(getFilePart());
-            logger.log(Level.INFO, "File name : {0}", fileName);
+		try {
+			InputStream is = getFilePart().getInputStream();
 
-            // generate *unique* filename 
-            final String extension = fileName.substring(fileName.length() - 4);
+			int i = is.available();
+			byte[] b = new byte[i];
+			is.read(b);
 
-            if (!EXTENSIONS_ALLOWED.contains(extension)) {
-                logger.severe("User tried to upload file that's not an image. Upload canceled.");
-                JsfUtil.addErrorMessage(new Exception("Error trying to upload file"), ResourceBundle.getBundle(BUNDLE).getString("Error trying to upload file"));
-                //response.sendRedirect("admin/product/List.xhtml?errMsg=Error trying to upload file");
-                return;
-            }
+			logger.log(Level.INFO, "Length : {0}", b.length);
+			String fileName = getFileName(getFilePart());
+			logger.log(Level.INFO, "File name : {0}", fileName);
 
-//            Integer id = current.getId();
-//            current = ejbFacade.find(2);
-            current.setImgSrc(b);
-            current.setImg(fileName);
-            
-            ejbFacade.edit(current);
-            setStep(3);
-            JsfUtil.addSuccessMessage("Product image successfuly uploaded!");
-            
-        } catch (Exception ex) {
-        }
+			// generate *unique* filename
+			final String extension = fileName.substring(fileName.length() - 4);
 
-    }
+			if (!EXTENSIONS_ALLOWED.contains(extension)) {
+				logger.severe("User tried to upload file that's not an image. Upload canceled.");
+				JsfUtil.addErrorMessage(
+						new Exception("Error trying to upload file"),
+						ResourceBundle.getBundle(BUNDLE).getString(
+								"Error trying to upload file"));
+				// response.sendRedirect("admin/product/List.xhtml?errMsg=Error trying to upload file");
+				return;
+			}
 
-    public ProductEntity getSelected() {
-        if (current == null) {
-            current = new ProductEntity();
-            selectedItemIndex = -1;
-        }
+			// Integer id = current.getId();
+			// current = ejbFacade.find(2);
+			current.setImgSrc(b);
+			current.setImg(fileName);
 
-        return current;
-    }
+			ejbFacade.updateProduct(current);
+			setStep(3);
+			JsfUtil.addSuccessMessage("Product image successfuly uploaded!");
 
-    public String showAll() {
-        recreateModel();
-        categoryId = 0; // show all products
+		} catch (Exception ex) {
+		}
 
-        return "product/List";
-    }
+	}
 
-    private ProductBean getFacade() {
-        return ejbFacade;
-    }
+	public Product getSelected() {
+		if (current == null) {
+			current = ejbFacade.newProductInstance();
+			selectedItemIndex = -1;
+		}
 
-    public AbstractPaginationHelper getPagination() {
+		return current;
+	}
 
-        if (pagination == null) {
+	public String showAll() {
+		recreateModel();
+		categoryId = 0; // show all products
 
-            pagination = new AbstractPaginationHelper(AbstractPaginationHelper.DEFAULT_SIZE) {
-                @Override
-                public int getItemsCount() {
-                    return getFacade().count();
-                }
+		return "product/List";
+	}
 
-                @Override
-                public DataModel createPageDataModel() {
-                    if (categoryId != 0) {
-                        return new ListDataModel(getFacade().findByCategory(new int[]{getPageFirstItem(),
-                            getPageFirstItem() + getPageSize()}, categoryId));
-                    }
+	private ProductBean getFacade() {
+		return ejbFacade;
+	}
 
-                    return new ListDataModel(getFacade().findRange(new int[]{getPageFirstItem(),
-                        getPageFirstItem() + getPageSize()}));
-                }
-            };
-        }
+	public AbstractPaginationHelper getPagination() {
 
-        return pagination;
-    }
+		if (pagination == null) {
 
-    public PageNavigation prepareList() {
-        recreateModel();
-        return PageNavigation.LIST;
-    }
+			pagination = new AbstractPaginationHelper(
+					AbstractPaginationHelper.DEFAULT_SIZE) {
+				@Override
+				public int getItemsCount() {
+					return getFacade().count();
+				}
 
-    public PageNavigation done() {
-        recreateModel();
-        setStep(1);
-        current = null;
+				@Override
+				public DataModel createPageDataModel() {
+					if (categoryId != 0) {
+						return new ListDataModel(getFacade()
+								.getProductsInCategory(categoryId,
+										getPageFirstItem(),
+										getPageFirstItem() + getPageSize()));
+					}
 
-        return PageNavigation.INDEX;
-    }
+					return new ListDataModel(getFacade().getAllInRange(
+							getPageFirstItem(),
+							getPageFirstItem() + getPageSize()));
+				}
+			};
+		}
 
-    public ProductEntity findById(int id) {
-        return ejbFacade.find(id);
-    }
+		return pagination;
+	}
 
-    public PageNavigation prepareView() {
-        current = (ProductEntity) getItems().getRowData();
-        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        return PageNavigation.VIEW;
-    }
+	public PageNavigation prepareList() {
+		recreateModel();
+		return PageNavigation.LIST;
+	}
 
-    public PageNavigation prepareCreate() {
-        current = new ProductEntity();
-        selectedItemIndex = -1;
-        setStep(1);
-        return PageNavigation.CREATE;
-    }
+	public PageNavigation done() {
+		recreateModel();
+		setStep(1);
+		current = null;
 
-    public PageNavigation nextStep() {
-        setStep(getStep() + 1);
+		return PageNavigation.INDEX;
+	}
 
-        return PageNavigation.CREATE;
-    }
+	public Product findById(int id) {
+		return ejbFacade.getProduct(id);
+	}
 
-    public PageNavigation create() {
-        try {
-            getFacade().create(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE).getString("ProductCreated"));
+	public PageNavigation prepareView() {
+		current = (Product) getItems().getRowData();
+		selectedItemIndex = pagination.getPageFirstItem()
+				+ getItems().getRowIndex();
+		return PageNavigation.VIEW;
+	}
 
-            setStep(2);
-            return PageNavigation.CREATE;
+	public PageNavigation prepareCreate() {
+		current = ejbFacade.newProductInstance();
+		selectedItemIndex = -1;
+		setStep(1);
+		return PageNavigation.CREATE;
+	}
 
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE).getString("PersistenceErrorOccured"));
-            return null;
-        }
-    }
+	public PageNavigation nextStep() {
+		setStep(getStep() + 1);
 
-    public PageNavigation prepareEdit() {
-        current = (ProductEntity) getItems().getRowData();
-        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
+		return PageNavigation.CREATE;
+	}
 
-        return PageNavigation.EDIT;
-    }
+	public PageNavigation create() {
+		try {
+			getFacade().createProduct(current);
+			JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE)
+					.getString("ProductCreated"));
 
-    public PageNavigation update() {
-        try {
-            getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE).getString("ProductUpdated"));
+			setStep(2);
+			return PageNavigation.CREATE;
 
-            return PageNavigation.VIEW;
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE).getString("PersistenceErrorOccured"));
-            return null;
-        }
+		} catch (Exception e) {
+			JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE)
+					.getString("PersistenceErrorOccured"));
+			return null;
+		}
+	}
 
+	public PageNavigation prepareEdit() {
+		current = (Product) getItems().getRowData();
+		selectedItemIndex = pagination.getPageFirstItem()
+				+ getItems().getRowIndex();
 
-    }
+		return PageNavigation.EDIT;
+	}
 
-    public PageNavigation destroy() {
-        current = (ProductEntity) getItems().getRowData();
-        selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        performDestroy();
-        recreateModel();
-        return PageNavigation.LIST;
-    }
+	public PageNavigation update() {
+		try {
+			getFacade().updateProduct(current);
+			JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE)
+					.getString("ProductUpdated"));
 
-    public PageNavigation destroyAndView() {
-        performDestroy();
-        recreateModel();
-        updateCurrentItem();
-        if (selectedItemIndex >= 0) {
-            return PageNavigation.VIEW;
-        } else {
-            // all items were removed - go back to list
-            recreateModel();
-            return PageNavigation.LIST;
-        }
-    }
+			return PageNavigation.VIEW;
+		} catch (Exception e) {
+			JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE)
+					.getString("PersistenceErrorOccured"));
+			return null;
+		}
 
-    private void performDestroy() {
-        try {
-            getFacade().remove(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE).getString("ProductDeleted"));
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE).getString("PersistenceErrorOccured"));
-        }
-    }
+	}
 
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-            // go to previous page if last page disappeared:
-            if (pagination.getPageFirstItem() >= count) {
-                pagination.previousPage();
-            }
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }
+	public PageNavigation destroy() {
+		current = (Product) getItems().getRowData();
+		selectedItemIndex = pagination.getPageFirstItem()
+				+ getItems().getRowIndex();
+		performDestroy();
+		recreateModel();
+		return PageNavigation.LIST;
+	}
 
-    public DataModel getItems() {
-        if (items == null) {
-            items = getPagination().createPageDataModel();
-        }
+	public PageNavigation destroyAndView() {
+		performDestroy();
+		recreateModel();
+		updateCurrentItem();
+		if (selectedItemIndex >= 0) {
+			return PageNavigation.VIEW;
+		} else {
+			// all items were removed - go back to list
+			recreateModel();
+			return PageNavigation.LIST;
+		}
+	}
 
-        return items;
-    }
+	private void performDestroy() {
+		try {
+			getFacade().removeProduct(current);
+			JsfUtil.addSuccessMessage(ResourceBundle.getBundle(BUNDLE)
+					.getString("ProductDeleted"));
+		} catch (Exception e) {
+			JsfUtil.addErrorMessage(e, ResourceBundle.getBundle(BUNDLE)
+					.getString("PersistenceErrorOccured"));
+		}
+	}
 
-    private void recreateModel() {
-        items = null;
-    }
+	private void updateCurrentItem() {
+		int count = getFacade().count();
+		if (selectedItemIndex >= count) {
+			// selected index cannot be bigger than number of items:
+			selectedItemIndex = count - 1;
+			// go to previous page if last page disappeared:
+			if (pagination.getPageFirstItem() >= count) {
+				pagination.previousPage();
+			}
+		}
+		if (selectedItemIndex >= 0) {
+			current = getFacade().getAllInRange(selectedItemIndex,
+					selectedItemIndex + 1).get(0);
+		}
+	}
 
-    public PageNavigation next() {
-        getPagination().nextPage();
-        recreateModel();
-        return PageNavigation.LIST;
-    }
+	public DataModel getItems() {
+		if (items == null) {
+			items = getPagination().createPageDataModel();
+		}
 
-    public PageNavigation previous() {
-        getPagination().previousPage();
-        recreateModel();
-        return PageNavigation.LIST;
-    }
+		return items;
+	}
 
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(ejbFacade.findAll(), false);
-    }
+	private void recreateModel() {
+		items = null;
+	}
 
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(ejbFacade.findAll(), true);
-    }
+	public PageNavigation next() {
+		getPagination().nextPage();
+		recreateModel();
+		return PageNavigation.LIST;
+	}
 
-    /**
-     * @return the categoryId
-     */
-    public int getCategoryId() {
-        return categoryId;
-    }
+	public PageNavigation previous() {
+		getPagination().previousPage();
+		recreateModel();
+		return PageNavigation.LIST;
+	}
 
-    /**
-     * @param categoryId the categoryId to set
-     */
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
-    }
+	public SelectItem[] getItemsAvailableSelectMany() {
+		return JsfUtil.getSelectItems(ejbFacade.getAll(), false);
+	}
 
-    /**
-     * @return the filePart
-     */
-    public Part getFilePart() {
-        return filePart;
-    }
+	public SelectItem[] getItemsAvailableSelectOne() {
+		return JsfUtil.getSelectItems(ejbFacade.getAll(), true);
+	}
 
-    /**
-     * @param filePart the filePart to set
-     */
-    public void setFilePart(Part filePart) {
-        this.filePart = filePart;
-    }
+	/**
+	 * @return the categoryId
+	 */
+	public int getCategoryId() {
+		return categoryId;
+	}
 
-    @FacesConverter(forClass = ProductEntity.class)
-    public static class ProductControllerConverter implements Converter {
+	/**
+	 * @param categoryId
+	 *            the categoryId to set
+	 */
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
+	}
 
-        @Override
-        public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
-            if (value == null || value.length() == 0) {
-                return null;
-            }
-            ProductController controller = (ProductController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "productController");
-            return controller.ejbFacade.find(getKey(value));
-        }
+	/**
+	 * @return the filePart
+	 */
+	public Part getFilePart() {
+		return filePart;
+	}
 
-        java.lang.Integer getKey(String value) {
-            java.lang.Integer key;
-            key = Integer.valueOf(value);
-            return key;
-        }
+	/**
+	 * @param filePart
+	 *            the filePart to set
+	 */
+	public void setFilePart(Part filePart) {
+		this.filePart = filePart;
+	}
 
-        String getStringKey(java.lang.Integer value) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(value);
-            return sb.toString();
-        }
+	@FacesConverter(forClass = Product.class)
+	public static class ProductControllerConverter implements Converter {
 
-        @Override
-        public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
-            if (object == null) {
-                return null;
-            }
-            if (object instanceof ProductEntity) {
-                ProductEntity o = (ProductEntity) object;
-                return getStringKey(o.getId());
-            } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + ProductController.class.getName());
-            }
-        }
-    }
+		@Override
+		public Object getAsObject(FacesContext facesContext,
+				UIComponent component, String value) {
+			if (value == null || value.length() == 0) {
+				return null;
+			}
+			ProductController controller = (ProductController) facesContext
+					.getApplication()
+					.getELResolver()
+					.getValue(facesContext.getELContext(), null,
+							"productController");
+			return controller.ejbFacade.getProduct(getKey(value));
+		}
 
-    public int getStep() {
-        return step;
-    }
+		java.lang.Integer getKey(String value) {
+			java.lang.Integer key;
+			key = Integer.valueOf(value);
+			return key;
+		}
 
-    public void setStep(int step) {
-        this.step = step;
-    }
+		String getStringKey(java.lang.Integer value) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(value);
+			return sb.toString();
+		}
+
+		@Override
+		public String getAsString(FacesContext facesContext,
+				UIComponent component, Object object) {
+			if (object == null) {
+				return null;
+			}
+			if (object instanceof Product) {
+				Product o = (Product) object;
+				return getStringKey(o.getId());
+			} else {
+				throw new IllegalArgumentException("object " + object
+						+ " is of type " + object.getClass().getName()
+						+ "; expected type: "
+						+ ProductController.class.getName());
+			}
+		}
+	}
+
+	public int getStep() {
+		return step;
+	}
+
+	public void setStep(int step) {
+		this.step = step;
+	}
 }
