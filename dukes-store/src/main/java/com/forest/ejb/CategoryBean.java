@@ -12,27 +12,41 @@
 
 package com.forest.ejb;
 
-import com.forest.entity.CategoryEntity;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import com.forest.entity.CategoryEntity;
+import com.forest.model.Category;
+import com.forest.persitence.jpa.CategoryPersistenceJPA;
+import com.forest.usecase.catalog.AbstractBaseCategoryManager;
+import com.forest.usecase.catalog.persistence.CategoryPersistence;
+
 /**
- *
+ * 
  * @author markito
  */
 @Stateless
-public class CategoryBean extends AbstractFacade<CategoryEntity> {
-    @PersistenceContext(unitName="forestPU")
-    private EntityManager em;
+public class CategoryBean extends AbstractBaseCategoryManager {
 
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
+	@PersistenceContext(unitName = "forestPU")
+	private EntityManager entityManager;
 
-    public CategoryBean() {
-        super(CategoryEntity.class);
-    }
+	private CategoryPersistenceJPA categoryPersistance = new CategoryPersistenceJPA();
+
+	@PostConstruct
+	public void init() {
+		categoryPersistance.setEntityManager(entityManager);
+	}
+
+	public Category newCategoryInstance() {
+		return new CategoryEntity();
+	}
+
+	@Override
+	protected CategoryPersistence getCategoryPersistence() {
+		return categoryPersistance;
+	}
 
 }

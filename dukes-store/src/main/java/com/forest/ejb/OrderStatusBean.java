@@ -12,39 +12,41 @@
 
 package com.forest.ejb;
 
-import com.forest.entity.OrderStatusEntity;
-import java.io.Serializable;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+
+import com.forest.entity.OrderStatusEntity;
+import com.forest.model.OrderStatus;
+import com.forest.persitence.jpa.OrderStatusPersistenceJPA;
+import com.forest.usecase.ecommerce.AbstractBaseOrderStatusManager;
+import com.forest.usecase.ecommerce.persistence.OrderStatusPersistence;
 
 /**
- *
+ * 
  * @author markito
  */
 @Stateless
-public class OrderStatusBean extends AbstractFacade<OrderStatusEntity> implements Serializable {
-    
-    private static final long serialVersionUID = 5199196331433553237L;
-    @PersistenceContext(unitName="forestPU")
-    private EntityManager em;
+public class OrderStatusBean extends AbstractBaseOrderStatusManager {
 
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
+	@PersistenceContext(unitName = "forestPU")
+	private EntityManager entityManager;
 
-    public OrderStatusBean() {
-        super(OrderStatusEntity.class);
-    }
+	private OrderStatusPersistenceJPA orderStatusPersistance = new OrderStatusPersistenceJPA();
 
-    public OrderStatusEntity getStatusByName(String status) {
-        Query createNamedQuery = getEntityManager().createNamedQuery("OrderStatus.findByStatus");
+	@PostConstruct
+	public void init() {
+		orderStatusPersistance.setEntityManager(entityManager);
+	}
 
-        //SELECT o FROM OrderStatus o WHERE o.status = :status
-        createNamedQuery.setParameter("status", status);
+	public OrderStatus newOrderStatusInstance() {
+		return new OrderStatusEntity();
+	}
 
-        return (OrderStatusEntity) createNamedQuery.getSingleResult();
+	@Override
+	protected OrderStatusPersistence getOrderStatusPersistence() {
+		return orderStatusPersistance;
+	}
+
 }
-    }

@@ -7,22 +7,31 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.*;
-import com.forest.events.OrderEvent;
-import com.forest.qualifiers.LoggedIn;
-import com.forest.web.util.JsfUtil;
-import com.forest.web.util.PageNavigation;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import com.forest.entity.CustomerOrderEntity;
+import com.forest.entity.OrderDetailEntity;
+import com.forest.entity.OrderDetailPKEntity;
+import com.forest.entity.OrderStatusEntity;
+import com.forest.entity.PersonEntity;
+import com.forest.entity.ProductEntity;
+import com.forest.events.OrderEvent;
+import com.forest.model.Group;
+import com.forest.model.OrderDetail;
+import com.forest.qualifiers.LoggedIn;
+import com.forest.web.util.JsfUtil;
+import com.forest.web.util.PageNavigation;
 
 @Named(value = "shoppingCart")
 @ConversationScoped
@@ -97,7 +106,7 @@ public class ShoppingCart implements Serializable {
 
         } else {
 
-            for (GroupsEntity g : user.getGroupsList()) {
+            for (Group g : user.getGroupsList()) {
                 if (g.getName().equals("ADMINS")) {
 
                     JsfUtil.addErrorMessage(JsfUtil.getStringFromBundle("bundles.Bundle", "AdministratorNotAllowed"));
@@ -106,7 +115,7 @@ public class ShoppingCart implements Serializable {
             }
 
             CustomerOrderEntity order = new CustomerOrderEntity();
-            List<OrderDetailEntity> details = new ArrayList<>();
+            List<OrderDetail> details = new ArrayList<>();
 
             OrderStatusEntity orderStatus = new OrderStatusEntity();
             orderStatus.setId(1); //by default the initial status
@@ -116,7 +125,7 @@ public class ShoppingCart implements Serializable {
             order.setAmount(getTotal());
             order.setCustomer(user);
 
-            facade.create(order);
+            facade.createCustomerOrder(order);
 
             for (ProductEntity p : getCartItems()) {
                 OrderDetailEntity detail = new OrderDetailEntity();
@@ -132,7 +141,7 @@ public class ShoppingCart implements Serializable {
             }
 
             order.setOrderDetailList(details);
-            facade.edit(order);
+            facade.updateCustomerOrder(order);
 
             OrderEvent event = orderToEvent(order);
 

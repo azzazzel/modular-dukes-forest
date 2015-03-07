@@ -7,127 +7,92 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.CustomerOrderEntity;
-import com.forest.entity.OrderStatusEntity;
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.ejb.EJB;
+
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+
+import com.forest.entity.CustomerOrderEntity;
+import com.forest.model.CustomerOrder;
+import com.forest.persitence.jpa.OrderPersistenceJPA;
+import com.forest.persitence.jpa.OrderStatusPersistenceJPA;
+import com.forest.usecase.ecommerce.AbstractBaseCustomerOrderManager;
+import com.forest.usecase.ecommerce.persistence.CustomerOrderPersistence;
+import com.forest.usecase.ecommerce.persistence.OrderStatusPersistence;
 
 /**
  * OrderBean is an EJB exposed as RESTful service Provides methods to manipulate
  * order status and query orders based on specific status.
- *
+ * 
  * @author markito
  */
 @Stateless
 @Path("/orders")
-public class OrderBean extends AbstractFacade<CustomerOrderEntity> implements Serializable {
+public class OrderBean extends AbstractBaseCustomerOrderManager implements Serializable {
 
-    private static final Logger logger = 
-            Logger.getLogger(ShoppingCart.class.getCanonicalName());
-    private static final long serialVersionUID = -2407971550575800416L;
-    @PersistenceContext(unitName = "forestPU")
-    private EntityManager em;
-    CustomerOrderEntity order;
-    @EJB
-    OrderStatusBean statusBean;
+	private static final long serialVersionUID = -2407971550575800416L;
 
-    public OrderBean() {
-        super(CustomerOrderEntity.class);
-    }
+	@PersistenceContext(unitName = "forestPU")
+	private EntityManager entityManager;
 
-    /**
-     * **************************************************************************
-     * Business methods
-     * ***************************************************************************
-     */
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
 
-    public List<CustomerOrderEntity> getOrderByCustomerId(Integer id) {
-        Query createNamedQuery = getEntityManager().createNamedQuery("CustomerOrder.findByCustomerId");
+	private OrderStatusPersistenceJPA orderStatusPersistance = new OrderStatusPersistenceJPA();
+	
+	private OrderPersistenceJPA orderPersistance = new OrderPersistenceJPA();
 
-        createNamedQuery.setParameter("id", id);
+	@PostConstruct
+	public void init() {
+		orderPersistance.setEntityManager(entityManager);
+		orderStatusPersistance.setEntityManager(entityManager);
+	}
 
-        return createNamedQuery.getResultList();
-    }
+	
+    public CustomerOrder newCustomerOrderInstance() {
+    	return new CustomerOrderEntity();
+	}
     
-    public CustomerOrderEntity getOrderById(Integer id) {
-        Query createNamedQuery = getEntityManager().createNamedQuery("CustomerOrder.findById");
-        createNamedQuery.setParameter("id", id);
-        return (CustomerOrderEntity) createNamedQuery.getSingleResult();
-    }
-  
-    @GET
-    @Produces({"application/xml", "application/json"})
-    public List<CustomerOrderEntity> getOrderByStatus(@QueryParam("status") int status) {
+	@Override
+	protected CustomerOrderPersistence getCustomerOrderPersistence() {
+		return orderPersistance;
+	}
 
-        Query createNamedQuery = getEntityManager().createNamedQuery("CustomerOrder.findByStatus");
 
-        OrderStatusEntity result = statusBean.find(status);
-
-        createNamedQuery.setParameter("status", result.getStatus());
-        List<CustomerOrderEntity> orders = createNamedQuery.getResultList();
-
-        return orders;
-    }
-
-    @PUT
-    @Path("{orderId}")
-    @Produces({"application/xml", "application/json"})
-    public void setOrderStatus(@PathParam("orderId") int orderId, String newStatus) { 
-        
-        logger.log(Level.INFO, "Order id:{0} - Status:{1}", new Object[]{orderId, newStatus});
-
-        try {
-            order = this.find(orderId);
-
-            if (order != null) {
-                logger.log(Level.FINEST, "Updating order {0} status to {1}", new Object[]{order.getId(), newStatus});
-
-                OrderStatusEntity oStatus = statusBean.find(new Integer(newStatus));
-                order.setOrderStatus(oStatus);
-
-                em.merge(order);
-
-                logger.info("Order Updated!");
-            }
-
-        } catch (Exception ex) {
-
-            logger.log(Level.SEVERE, ex.getMessage());
-        }
-
-    }
+	@Override
+	protected OrderStatusPersistence getOrderStatusPersistence() {
+		return orderStatusPersistance;
+	}    
     
-     /**
-     * ***************************************************************************
-     * Status orders mapped to ENUM
-     */
-    public enum Status {
+	/**
+	 * *************************************************************************
+	 * * Business methods
+	 * *******************************************************
+	 * ********************
+	 */
 
-        PENDING_PAYMENT(2),
-        READY_TO_SHIP(3),
-        SHIPPED(4),
-        CANCELLED_PAYMENT(5),
-        CANCELLED_MANUAL(6);
-        private int status;
+	@GET
+	@Produces({ "application/xml", "application/json" })
+	public List<CustomerOrder> getOrderByStatus(@QueryParam("status") int status) {
+		return super.getOrderByStatus(status);
+	}
 
-        private Status(int pStatus) {
-            status = pStatus;
-        }
+	@PUT
+	@Path("{orderId}")
+	@Produces({ "application/xml", "application/json" })
+	public void setOrderStatus(@PathParam("orderId") int orderId,
+			String newStatus) {
+		super.setOrderStatus(orderId, newStatus);
+	}
 
-        public int getStatus() {
-            return status;
-        }
-    }
+
+
+
 }

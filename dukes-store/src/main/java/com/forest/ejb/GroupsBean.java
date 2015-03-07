@@ -7,27 +7,41 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.GroupsEntity;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import com.forest.entity.GroupsEntity;
+import com.forest.model.Group;
+import com.forest.persitence.jpa.GroupPersistenceJPA;
+import com.forest.usecase.identity.AbstractBaseGroupManager;
+import com.forest.usecase.identity.persistence.GroupPersistence;
 
 /**
  *
  * @author ievans
  */
 @Stateless
-public class GroupsBean extends AbstractFacade<GroupsEntity> {
-    @PersistenceContext(unitName = "forestPU")
-    private EntityManager em;
+public class GroupsBean extends AbstractBaseGroupManager {
 
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
+    @PersistenceContext(unitName="forestPU")
+    private EntityManager entityManager;
+
+    private GroupPersistenceJPA groupPersistance = new GroupPersistenceJPA();
+
+    @PostConstruct
+    public void init() {
+    	groupPersistance.setEntityManager(entityManager);
     }
 
-    public GroupsBean() {
-        super(GroupsEntity.class);
-    }
-    
+    public Group newGroupInstance() {
+    	return new GroupsEntity();
+	}
+
+	@Override
+	protected GroupPersistence getGroupPersistence() {
+		return groupPersistance;
+	}
+
 }

@@ -7,59 +7,42 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.CustomerEntity;
-import com.forest.entity.PersonEntity;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+
+import com.forest.entity.CustomerEntity;
+import com.forest.model.Customer;
+import com.forest.persitence.jpa.PersonPersistenceJPA;
+import com.forest.usecase.identity.AbstractBasePersonManager;
+import com.forest.usecase.identity.persistence.PersonPersistence;
 
 /**
  *
  * @author markito
  */
 @Stateless
-public class UserBean extends AbstractFacade<CustomerEntity> {
+public class UserBean extends AbstractBasePersonManager {
 
     @PersistenceContext(unitName="forestPU")
-    private EntityManager em;
+    private EntityManager entityManager;
 
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
+    private PersonPersistenceJPA personPersistance = new PersonPersistenceJPA();
+
+    @PostConstruct
+    public void init() {
+    	personPersistance.setEntityManager(entityManager);
     }
 
-    /**
-     * Create a new user verifying if the user already exists
-     * TODO: Create custom exceptions ?
-     * @param customer
-     * @return 
-     */
-    public boolean createUser(CustomerEntity customer) {
+    public Customer newCustomerInstance() {
+    	return new CustomerEntity();
+	}
 
-        // check if user exists
-        if (getUserByEmail(customer.getEmail()) == null) {
-            super.create(customer);
-            return true;
-        } else {
-            return false;
-        }
-    }
+	@Override
+	protected PersonPersistence getPersonPersistence() {
+		return personPersistance;
+	}
 
-    public PersonEntity getUserByEmail(String email) {
-        Query createNamedQuery = getEntityManager().createNamedQuery("Person.findByEmail");
 
-        createNamedQuery.setParameter("email", email);
-
-        if (createNamedQuery.getResultList().size() > 0) {
-            return (PersonEntity) createNamedQuery.getSingleResult();
-        }
-        else {
-            return null;
-        }
-    }
-
-    public UserBean() {
-        super(CustomerEntity.class);
-    }
 }

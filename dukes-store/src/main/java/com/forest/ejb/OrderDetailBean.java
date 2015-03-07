@@ -7,38 +7,64 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.OrderDetailEntity;
-import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import com.forest.entity.OrderDetailEntity;
+import com.forest.model.OrderDetail;
+import com.forest.model.OrderDetailPK;
+import com.forest.persitence.jpa.OrderDetailPersistenceJPA;
+import com.forest.usecase.ecommerce.AbstractBaseOrderDetailManager;
+import com.forest.usecase.ecommerce.persistence.OrderDetailPersistence;
 
 /**
  *
  * @author markito
  */
 @Stateless
-public class OrderDetailBean extends AbstractFacade<OrderDetailEntity> {
-    @PersistenceContext(unitName="forestPU")
-    private EntityManager em;
+public class OrderDetailBean extends AbstractBaseOrderDetailManager {
 
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
+	private static final String SEPARATOR = "#";
+	private static final String SEPARATOR_ESCAPED = "\\#";
+	
+	@PersistenceContext(unitName="forestPU")
+    private EntityManager entityManager;
+	
+	private OrderDetailPersistenceJPA orderDetailPersistance = new OrderDetailPersistenceJPA();
+	
+	@PostConstruct
+	public void init() {
+		orderDetailPersistance.setEntityManager(entityManager);
+	}
 
-    public OrderDetailBean() {
-        super(OrderDetailEntity.class);
-    }
 
-    /**
-     * Example of usage of NamedQuery
-     * @param orderId
-     * @return 
-     */
-    public List<OrderDetailEntity> findOrderDetailByOrder(int orderId) {
-        List<OrderDetailEntity> details = getEntityManager().createNamedQuery("OrderDetail.findByOrderId").setParameter("orderId", orderId).getResultList();
-        
-        return details;
-    }
+	public OrderDetailPK getKey(String value) {
+		com.forest.entity.OrderDetailPKEntity key;
+		String values[] = value.split(SEPARATOR_ESCAPED);
+		key = new com.forest.entity.OrderDetailPKEntity();
+		key.setOrderId(Integer.parseInt(values[0]));
+		key.setProductId(Integer.parseInt(values[1]));
+		return key;
+	}
+
+	public String getStringKey(OrderDetailPK value) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(value.getOrderId());
+		sb.append(SEPARATOR);
+		sb.append(value.getProductId());
+		return sb.toString();
+	}
+	
+    public OrderDetail newOrderDetailInstance() {
+    	return new OrderDetailEntity();
+	}
+
+
+	@Override
+	protected OrderDetailPersistence getOrderDetailPersistence() {
+		return orderDetailPersistance;
+	}
+
 }

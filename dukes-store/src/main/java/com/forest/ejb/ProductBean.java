@@ -7,61 +7,41 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.CategoryEntity;
-import com.forest.entity.ProductEntity;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+
+import com.forest.entity.ProductEntity;
+import com.forest.model.Product;
+import com.forest.persitence.jpa.ProductPersistenceJPA;
+import com.forest.usecase.catalog.AbstractBaseProductManager;
+import com.forest.usecase.catalog.persistence.ProductPersistence;
 
 /**
- *
+ * 
  * @author markito
  */
 @Stateless
-public class ProductBean extends AbstractFacade<ProductEntity> {
+public class ProductBean extends AbstractBaseProductManager {
 
-    private static final Logger logger = 
-            Logger.getLogger(ProductBean.class.getCanonicalName());
-    
-    @PersistenceContext(unitName="forestPU")
-    private EntityManager em;
+	@PersistenceContext(unitName = "forestPU")
+	private EntityManager entityManager;
 
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
+	private ProductPersistenceJPA productPersistance = new ProductPersistenceJPA();
 
-    public ProductBean() {
-        super(ProductEntity.class);
-    }
+	@PostConstruct
+	public void init() {
+		productPersistance.setEntityManager(entityManager);
+	}
 
-    /**
-     * Example usage of JPA CriteriaBuilder. You can also use NamedQueries
-     * @param range
-     * @param categoryId
-     * @return 
-     */
-    public List<ProductEntity> findByCategory(int[] range, int categoryId) {       
-         CategoryEntity cat = new CategoryEntity();
-         cat.setId(categoryId);
-         
-         CriteriaBuilder qb = em.getCriteriaBuilder();
-         CriteriaQuery<ProductEntity> query = qb.createQuery(ProductEntity.class);
-         Root<ProductEntity> product = query.from(ProductEntity.class);
-         query.where(qb.equal(product.get("category"), cat));
+	public Product newProductInstance() {
+		return new ProductEntity();
+	}
 
-         List<ProductEntity> result = this.findRange(range, query);
-         
-         logger.log(Level.FINEST, "Product List size: {0}", result.size());
-         
-        return result;
-    }
-    
-    
+	@Override
+	protected ProductPersistence getProductPersistence() {
+		return productPersistance;
+	}
+
 }

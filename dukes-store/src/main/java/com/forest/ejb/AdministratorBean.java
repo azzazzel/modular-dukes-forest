@@ -7,49 +7,50 @@
  */
 package com.forest.ejb;
 
-import com.forest.entity.AdministratorEntity;
-import com.forest.entity.GroupsEntity;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import com.forest.entity.AdministratorEntity;
+import com.forest.model.Administrator;
+import com.forest.persitence.jpa.AdministratorPersistenceJPA;
+import com.forest.persitence.jpa.GroupPersistenceJPA;
+import com.forest.usecase.identity.AbstractBaseAdministratorManager;
+import com.forest.usecase.identity.persistence.AdministratorPersistence;
+import com.forest.usecase.identity.persistence.GroupPersistence;
+
 /**
- *
+ * 
  * @author ievans
  */
 @Stateless
-public class AdministratorBean extends AbstractFacade<AdministratorEntity> {
-    @PersistenceContext(unitName = "forestPU")
-    private EntityManager em;
+public class AdministratorBean extends AbstractBaseAdministratorManager {
 
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
-    }
+	@PersistenceContext(unitName = "forestPU")
+	private EntityManager entityManager;
 
-    public AdministratorBean() {
-        super(AdministratorEntity.class);
-    }
-    
-    @Override
-    public void create(AdministratorEntity admin) {
-        GroupsEntity adminGroup = (GroupsEntity) em.createNamedQuery("Groups.findByName")
-                .setParameter("name", "Administrator")
-                .getSingleResult();
-        admin.getGroupsList().add(adminGroup);
-        adminGroup.getPersonList().add(admin);
-        em.persist(admin);
-        em.merge(adminGroup);
-    }
-    
-    @Override
-    public void remove(AdministratorEntity admin) {
-        GroupsEntity adminGroup = (GroupsEntity) em.createNamedQuery("Groups.findByName")
-                .setParameter("name", "Administrator")
-                .getSingleResult();
-        adminGroup.getPersonList().remove(admin);
-        em.remove(em.merge(admin));
-        em.merge(adminGroup);
-    }
-    
+	private AdministratorPersistenceJPA administratorPersistence = new AdministratorPersistenceJPA();
+
+	private GroupPersistenceJPA groupPersistance = new GroupPersistenceJPA();
+	
+    @PostConstruct
+    public void init() {
+		administratorPersistence.setEntityManager(entityManager);
+		groupPersistance.setEntityManager(entityManager);
+	}
+
+	public Administrator newAdministratorInstance() {
+		return new AdministratorEntity();
+	}
+
+	@Override
+	protected AdministratorPersistence getAdministratorPersistence() {
+		return administratorPersistence;
+	}
+
+	@Override
+	protected GroupPersistence getGroupPersistence() {
+		return groupPersistance;
+	}
 }
