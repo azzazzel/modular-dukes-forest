@@ -15,7 +15,8 @@ com.forest.shipment.wiring,\
 com.forest.shipment.ui,\
 com.forest.payment.services,\
 com.forest.persistence,\
-com.forest.model"
+com.forest.model,\
+org.springframework.boot"
 
 
 mkdir -p $REPORT_DIR
