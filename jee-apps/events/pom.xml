@@ -3,7 +3,7 @@
 
     <parent>
         <groupId>org.glassfish.javaeetutorial</groupId>
-        <artifactId>dukes-forest</artifactId>
+        <artifactId>jee-apps</artifactId>
         <version>7.0.6-SNAPSHOT</version>
     </parent>
     

@@ -12,7 +12,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<javaee.api.version>7.0</javaee.api.version>
 		<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
 		<maven.source.plugin.version>2.2.1</maven.source.plugin.version>
 		<maven.clean.plugin.version>2.5</maven.clean.plugin.version>
@@ -27,11 +26,6 @@
 		<maven.exec.plugin.version>1.2.1</maven.exec.plugin.version>
 		<junit.version>4.11</junit.version>
 		<eclipselink.version>2.5.0</eclipselink.version>
-		<glassfish.embedded.version>4.0</glassfish.embedded.version>
-		<cargo.plugin.version>1.4.4</cargo.plugin.version>
-		<glassfish.domain.name>domain1</glassfish.domain.name>
-		<glassfish.home>${glassfish.home.prefix}/glassfish4</glassfish.home>
-		<integration.container.id>glassfish4x</integration.container.id>
 	</properties>
 
 	<repositories>
@@ -58,59 +52,9 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${maven.compiler.plugin.version}</version>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>${maven.source.plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-clean-plugin</artifactId>
-					<version>${maven.clean.plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-war-plugin</artifactId>
-					<version>${maven.war.plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.cargo</groupId>
-					<artifactId>cargo-maven2-plugin</artifactId>
-					<version>${cargo.plugin.version}</version>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
-			<plugin>
-				<groupId>org.codehaus.cargo</groupId>
-				<artifactId>cargo-maven2-plugin</artifactId>
-				<inherited>true</inherited>
-				<executions>
-					<execution>
-						<id>deploy</id>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>redeploy</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<container>
-						<containerId>${integration.container.id}</containerId>
-						<type>installed</type>
-						<home>${glassfish.home}</home>
-					</container>
-					<configuration>
-						<type>existing</type>
-						<home>${glassfish.home}/glassfish/domains</home>
-						<properties>
-							<cargo.glassfish.domain.name>${glassfish.domain.name}</cargo.glassfish.domain.name>
-							<!--cargo.remote.username></cargo.remote.username -->
-							<cargo.remote.password />
-						</properties>
-					</configuration>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -120,62 +64,13 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>com.mycila.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-				<version>${maven.license.plugin.version}</version>
-				<configuration>
-					<header>common/license.txt</header>
-					<excludes>
-						<exclude>common/**</exclude>
-						<exclude>**/META-INF/**</exclude>
-						<exclude>**/WEB-INF/**</exclude>
-						<exclude>**/nbactions.xml</exclude>
-						<exclude>**/nb-configuration.xml</exclude>
-						<exclude>**/glassfish-resources.xml</exclude>
-						<exclude>**/simple-flow-flow.xml</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>${maven.release.plugin.version}</version>
-				<configuration>
-					<!-- During release:perform, enable the "sdk" profile -->
-					<releaseProfiles>sdk</releaseProfiles>
-					<autoVersionSubmodules>true</autoVersionSubmodules>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<configuration>
-					<skip>true</skip>
-					<executable>${glassfish.home}/bin/asadmin${glassfish.executables.suffix}</executable>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
-
-	<dependencies>
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>${javaee.api.version}</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
-
 	<modules>
-		<module>events</module>
-		<module>jpa-persistence</module>
-		<module>dukes-resources</module>
-		<module>dukes-payment</module>
-		<module>dukes-store</module>
-		<module>dukes-shipment</module>
 		<module>dukes-domain-model</module>
+		<module>jpa-persistence</module>
+		<module>jee-apps</module>
 		<module>usecases</module>
 	</modules>
 
