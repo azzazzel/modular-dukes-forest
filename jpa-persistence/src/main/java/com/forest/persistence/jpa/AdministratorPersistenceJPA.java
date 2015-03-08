@@ -1,9 +1,9 @@
-package com.forest.persitence.jpa;
+package com.forest.persistence.jpa;
 
 import javax.persistence.EntityManager;
 
-import com.forest.entity.AdministratorEntity;
 import com.forest.model.Administrator;
+import com.forest.persistence.entity.AdministratorEntity;
 import com.forest.usecase.identity.persistence.AdministratorPersistence;
 
 public class AdministratorPersistenceJPA extends AbstractBasePersistence<AdministratorEntity, Administrator> implements AdministratorPersistence {

@@ -10,16 +10,16 @@
  * and open the template in the editor.
  */
 
-package com.forest.ejb;
+package com.forest.store.wiring.ecommerce;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.forest.entity.OrderStatusEntity;
 import com.forest.model.OrderStatus;
-import com.forest.persitence.jpa.OrderStatusPersistenceJPA;
+import com.forest.persistence.entity.OrderStatusEntity;
+import com.forest.persistence.jpa.OrderStatusPersistenceJPA;
 import com.forest.usecase.ecommerce.AbstractBaseOrderStatusManager;
 import com.forest.usecase.ecommerce.persistence.OrderStatusPersistence;
 

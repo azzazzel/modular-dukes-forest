@@ -1,13 +1,13 @@
-package com.forest.persitence.jpa;
+package com.forest.persistence.jpa;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import com.forest.entity.CustomerOrderEntity;
 import com.forest.model.CustomerOrder;
 import com.forest.model.OrderStatus;
+import com.forest.persistence.entity.CustomerOrderEntity;
 import com.forest.usecase.ecommerce.persistence.CustomerOrderPersistence;
 
 public class OrderPersistenceJPA extends AbstractBasePersistence<CustomerOrderEntity, CustomerOrder> implements CustomerOrderPersistence {

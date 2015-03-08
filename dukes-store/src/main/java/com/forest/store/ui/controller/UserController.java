@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.web;
+package com.forest.store.ui.controller;
 
 import java.io.Serializable;
 import java.util.logging.Level;
@@ -23,8 +23,8 @@ import javax.servlet.http.HttpSession;
 
 import com.forest.model.Group;
 import com.forest.model.Person;
-import com.forest.qualifiers.LoggedIn;
-import com.forest.web.util.JsfUtil;
+import com.forest.store.qualifiers.LoggedIn;
+import com.forest.store.ui.util.JsfUtil;
 
 /**
  *
@@ -39,7 +39,7 @@ public class UserController implements Serializable {
 
     Person user;
     @EJB
-    private com.forest.ejb.UserBean ejbFacade;
+    private com.forest.store.wiring.identity.UserBean ejbFacade;
     private String username;
     private String password;
     @Inject
@@ -109,7 +109,7 @@ public class UserController implements Serializable {
     /**
      * @return the ejbFacade
      */
-    public com.forest.ejb.UserBean getEjbFacade() {
+    public com.forest.store.wiring.identity.UserBean getEjbFacade() {
         return ejbFacade;
     }
 

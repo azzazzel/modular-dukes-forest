@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.handlers;
+package com.forest.store.wiring.ecommerce;
 
 import com.forest.events.OrderEvent;
 

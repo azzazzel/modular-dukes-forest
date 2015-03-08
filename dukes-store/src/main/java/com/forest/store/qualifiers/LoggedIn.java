@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.qualifiers;
+package com.forest.store.qualifiers;
 
 import static java.lang.annotation.ElementType.*;
 import java.lang.annotation.Retention;

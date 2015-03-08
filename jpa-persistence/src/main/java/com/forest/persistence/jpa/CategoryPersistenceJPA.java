@@ -1,9 +1,9 @@
-package com.forest.persitence.jpa;
+package com.forest.persistence.jpa;
 
 import javax.persistence.EntityManager;
 
-import com.forest.entity.CategoryEntity;
 import com.forest.model.Category;
+import com.forest.persistence.entity.CategoryEntity;
 import com.forest.usecase.catalog.persistence.CategoryPersistence;
 
 public class CategoryPersistenceJPA extends AbstractBasePersistence<CategoryEntity, Category> implements CategoryPersistence {

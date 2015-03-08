@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.exception;
+package com.forest.store.ui.exception;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

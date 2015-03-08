@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.ejb;
+package com.forest.store.wiring.ecommerce;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -23,14 +23,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import com.forest.entity.CustomerOrderEntity;
-import com.forest.entity.OrderDetailEntity;
-import com.forest.entity.OrderDetailPKEntity;
 import com.forest.events.OrderEvent;
 import com.forest.model.CustomerOrder;
 import com.forest.model.OrderDetail;
-import com.forest.persitence.jpa.OrderPersistenceJPA;
-import com.forest.persitence.jpa.OrderStatusPersistenceJPA;
+import com.forest.persistence.entity.CustomerOrderEntity;
+import com.forest.persistence.entity.OrderDetailEntity;
+import com.forest.persistence.entity.OrderDetailPKEntity;
+import com.forest.persistence.jpa.OrderPersistenceJPA;
+import com.forest.persistence.jpa.OrderStatusPersistenceJPA;
 import com.forest.usecase.ecommerce.AbstractBaseCustomerOrderManager;
 import com.forest.usecase.ecommerce.persistence.CustomerOrderPersistence;
 import com.forest.usecase.ecommerce.persistence.OrderStatusPersistence;

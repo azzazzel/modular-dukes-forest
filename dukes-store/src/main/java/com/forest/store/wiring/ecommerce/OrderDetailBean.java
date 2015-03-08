@@ -5,17 +5,17 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.ejb;
+package com.forest.store.wiring.ecommerce;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.forest.entity.OrderDetailEntity;
 import com.forest.model.OrderDetail;
 import com.forest.model.OrderDetailPK;
-import com.forest.persitence.jpa.OrderDetailPersistenceJPA;
+import com.forest.persistence.entity.OrderDetailEntity;
+import com.forest.persistence.jpa.OrderDetailPersistenceJPA;
 import com.forest.usecase.ecommerce.AbstractBaseOrderDetailManager;
 import com.forest.usecase.ecommerce.persistence.OrderDetailPersistence;
 
@@ -41,9 +41,9 @@ public class OrderDetailBean extends AbstractBaseOrderDetailManager {
 
 
 	public OrderDetailPK getKey(String value) {
-		com.forest.entity.OrderDetailPKEntity key;
+		com.forest.persistence.entity.OrderDetailPKEntity key;
 		String values[] = value.split(SEPARATOR_ESCAPED);
-		key = new com.forest.entity.OrderDetailPKEntity();
+		key = new com.forest.persistence.entity.OrderDetailPKEntity();
 		key.setOrderId(Integer.parseInt(values[0]));
 		key.setProductId(Integer.parseInt(values[1]));
 		return key;

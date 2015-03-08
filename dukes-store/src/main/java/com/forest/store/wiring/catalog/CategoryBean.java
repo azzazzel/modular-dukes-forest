@@ -10,16 +10,16 @@
  * and open the template in the editor.
  */
 
-package com.forest.ejb;
+package com.forest.store.wiring.catalog;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.forest.entity.CategoryEntity;
 import com.forest.model.Category;
-import com.forest.persitence.jpa.CategoryPersistenceJPA;
+import com.forest.persistence.entity.CategoryEntity;
+import com.forest.persistence.jpa.CategoryPersistenceJPA;
 import com.forest.usecase.catalog.AbstractBaseCategoryManager;
 import com.forest.usecase.catalog.persistence.CategoryPersistence;
 

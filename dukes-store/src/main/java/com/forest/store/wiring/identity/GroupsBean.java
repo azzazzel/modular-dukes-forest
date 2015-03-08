@@ -5,16 +5,16 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.ejb;
+package com.forest.store.wiring.identity;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.forest.entity.GroupsEntity;
 import com.forest.model.Group;
-import com.forest.persitence.jpa.GroupPersistenceJPA;
+import com.forest.persistence.entity.GroupsEntity;
+import com.forest.persistence.jpa.GroupPersistenceJPA;
 import com.forest.usecase.identity.AbstractBaseGroupManager;
 import com.forest.usecase.identity.persistence.GroupPersistence;
 

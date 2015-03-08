@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.handlers;
+package com.forest.store.wiring.ecommerce;
 
 import java.io.Serializable;
 import java.util.logging.Level;
@@ -16,9 +16,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Observes;
 
-import com.forest.ejb.OrderBean;
 import com.forest.events.OrderEvent;
-import com.forest.qualifiers.Paid;
+import com.forest.store.qualifiers.Paid;
 
 /**
  *

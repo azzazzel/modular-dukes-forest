@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.web;
+package com.forest.store.ui.controller;
 
 import java.io.Serializable;
 import java.util.ResourceBundle;
@@ -24,14 +24,14 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.forest.ejb.UserBean;
 import com.forest.model.Customer;
 import com.forest.model.Person;
-import com.forest.qualifiers.LoggedIn;
-import com.forest.web.util.AbstractPaginationHelper;
-import com.forest.web.util.JsfUtil;
-import com.forest.web.util.MD5Util;
-import com.forest.web.util.PageNavigation;
+import com.forest.store.qualifiers.LoggedIn;
+import com.forest.store.ui.util.AbstractPaginationHelper;
+import com.forest.store.ui.util.JsfUtil;
+import com.forest.store.ui.util.MD5Util;
+import com.forest.store.ui.util.PageNavigation;
+import com.forest.store.wiring.identity.UserBean;
 
 @Named(value = "customerController")
 @SessionScoped
@@ -46,7 +46,7 @@ public class CustomerController implements Serializable {
 	private Customer current;
 	private DataModel items = null;
 	@EJB
-	private com.forest.ejb.UserBean ejbFacade;
+	private com.forest.store.wiring.identity.UserBean ejbFacade;
 
 	private static final Logger logger = Logger
 			.getLogger(CustomerController.class.getCanonicalName());

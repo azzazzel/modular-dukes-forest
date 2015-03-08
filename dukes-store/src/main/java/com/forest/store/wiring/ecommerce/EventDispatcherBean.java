@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.ejb;
+package com.forest.store.wiring.ecommerce;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,8 +17,9 @@ import javax.inject.Named;
 
 import com.forest.events.OrderEvent;
 import com.forest.model.CustomerOrder;
-import com.forest.qualifiers.New;
-import com.forest.qualifiers.Paid;
+import com.forest.store.qualifiers.New;
+import com.forest.store.qualifiers.Paid;
+import com.forest.store.wiring.ecommerce.PaymentAndPackingProvider;
 
 /**
  * 

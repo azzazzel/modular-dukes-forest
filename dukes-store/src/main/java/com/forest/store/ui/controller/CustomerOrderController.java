@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.web;
+package com.forest.store.ui.controller;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,13 +25,13 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.forest.ejb.OrderBean;
 import com.forest.model.CustomerOrder;
 import com.forest.model.Person;
-import com.forest.qualifiers.LoggedIn;
-import com.forest.web.util.AbstractPaginationHelper;
-import com.forest.web.util.JsfUtil;
-import com.forest.web.util.PageNavigation;
+import com.forest.store.qualifiers.LoggedIn;
+import com.forest.store.ui.util.AbstractPaginationHelper;
+import com.forest.store.ui.util.JsfUtil;
+import com.forest.store.ui.util.PageNavigation;
+import com.forest.store.wiring.ecommerce.OrderBean;
 
 @Named(value = "customerOrderController")
 @SessionScoped
@@ -46,7 +46,7 @@ public class CustomerOrderController implements Serializable {
 	private CustomerOrder current;
 	private DataModel items = null;
 	@EJB
-	private com.forest.ejb.OrderBean ejbFacade;
+	private com.forest.store.wiring.ecommerce.OrderBean ejbFacade;
 	private AbstractPaginationHelper pagination;
 	private int selectedItemIndex;
 	private String searchString;

@@ -5,16 +5,16 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.ejb;
+package com.forest.store.wiring.catalog;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.forest.entity.ProductEntity;
 import com.forest.model.Product;
-import com.forest.persitence.jpa.ProductPersistenceJPA;
+import com.forest.persistence.entity.ProductEntity;
+import com.forest.persistence.jpa.ProductPersistenceJPA;
 import com.forest.usecase.catalog.AbstractBaseProductManager;
 import com.forest.usecase.catalog.persistence.ProductPersistence;
 

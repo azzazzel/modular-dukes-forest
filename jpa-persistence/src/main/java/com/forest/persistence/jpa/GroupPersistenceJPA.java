@@ -1,9 +1,9 @@
-package com.forest.persitence.jpa;
+package com.forest.persistence.jpa;
 
 import javax.persistence.EntityManager;
 
-import com.forest.entity.GroupsEntity;
 import com.forest.model.Group;
+import com.forest.persistence.entity.GroupsEntity;
 import com.forest.usecase.identity.persistence.GroupPersistence;
 
 public class GroupPersistenceJPA extends AbstractBasePersistence<GroupsEntity, Group> implements GroupPersistence {

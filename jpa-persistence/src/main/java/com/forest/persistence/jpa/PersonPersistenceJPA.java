@@ -1,10 +1,10 @@
-package com.forest.persitence.jpa;
+package com.forest.persistence.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import com.forest.entity.PersonEntity;
 import com.forest.model.Person;
+import com.forest.persistence.entity.PersonEntity;
 import com.forest.usecase.identity.persistence.PersonPersistence;
 
 public class PersonPersistenceJPA extends AbstractBasePersistence<PersonEntity, Person> implements PersonPersistence {

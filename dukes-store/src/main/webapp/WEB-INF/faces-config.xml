@@ -19,7 +19,7 @@
     </application>
     <factory>
         <exception-handler-factory>
-            com.forest.exception.CustomExceptionHandlerFactory
+            com.forest.store.ui.exception.CustomExceptionHandlerFactory
         </exception-handler-factory>
     </factory>
     

@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.web;
+package com.forest.store.ui.controller;
 
 import java.io.Serializable;
 import java.util.ResourceBundle;
@@ -21,11 +21,11 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
-import com.forest.ejb.CategoryBean;
 import com.forest.model.Category;
-import com.forest.web.util.AbstractPaginationHelper;
-import com.forest.web.util.JsfUtil;
-import com.forest.web.util.PageNavigation;
+import com.forest.store.ui.util.AbstractPaginationHelper;
+import com.forest.store.ui.util.JsfUtil;
+import com.forest.store.ui.util.PageNavigation;
+import com.forest.store.wiring.catalog.CategoryBean;
 
 @ManagedBean(name = "categoryController")
 @SessionScoped
@@ -37,7 +37,7 @@ public class CategoryController implements Serializable {
 	private Category current;
 	private DataModel items = null;
 	@EJB
-	private com.forest.ejb.CategoryBean ejbFacade;
+	private com.forest.store.wiring.catalog.CategoryBean ejbFacade;
 	private AbstractPaginationHelper pagination;
 	private int selectedItemIndex;
 

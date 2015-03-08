@@ -1,10 +1,10 @@
-package com.forest.persitence.jpa;
+package com.forest.persistence.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import com.forest.entity.OrderStatusEntity;
 import com.forest.model.OrderStatus;
+import com.forest.persistence.entity.OrderStatusEntity;
 import com.forest.usecase.ecommerce.persistence.OrderStatusPersistence;
 
 public class OrderStatusPersistenceJPA extends

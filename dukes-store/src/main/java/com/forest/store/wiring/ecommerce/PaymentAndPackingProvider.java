@@ -1,4 +1,4 @@
-package com.forest.ejb;
+package com.forest.store.wiring.ecommerce;
 
 import javax.ejb.Local;
 

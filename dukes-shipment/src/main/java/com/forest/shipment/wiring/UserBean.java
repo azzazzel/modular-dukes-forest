@@ -5,16 +5,16 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.shipment.session;
+package com.forest.shipment.wiring;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.forest.entity.CustomerEntity;
 import com.forest.model.Customer;
-import com.forest.persitence.jpa.PersonPersistenceJPA;
+import com.forest.persistence.entity.CustomerEntity;
+import com.forest.persistence.jpa.PersonPersistenceJPA;
 import com.forest.usecase.identity.AbstractBasePersonManager;
 import com.forest.usecase.identity.persistence.PersonPersistence;
 

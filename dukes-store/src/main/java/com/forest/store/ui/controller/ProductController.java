@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.web;
+package com.forest.store.ui.controller;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -27,11 +27,11 @@ import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.servlet.http.Part;
 
-import com.forest.ejb.ProductBean;
 import com.forest.model.Product;
-import com.forest.web.util.AbstractPaginationHelper;
-import com.forest.web.util.JsfUtil;
-import com.forest.web.util.PageNavigation;
+import com.forest.store.ui.util.AbstractPaginationHelper;
+import com.forest.store.ui.util.JsfUtil;
+import com.forest.store.ui.util.PageNavigation;
+import com.forest.store.wiring.catalog.ProductBean;
 
 @Named(value = "productController")
 @SessionScoped
@@ -44,7 +44,7 @@ public class ProductController implements Serializable {
 	private Product current;
 	private DataModel items = null;
 	@EJB
-	private com.forest.ejb.ProductBean ejbFacade;
+	private com.forest.store.wiring.catalog.ProductBean ejbFacade;
 	private AbstractPaginationHelper pagination;
 	private int selectedItemIndex;
 	// used for wizard

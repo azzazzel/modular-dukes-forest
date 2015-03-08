@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.shipment.web;
+package com.forest.shipment.wiring;
 
 
 import java.io.Serializable;
@@ -29,7 +29,6 @@ import javax.ws.rs.core.Response;
 
 import com.forest.events.OrderEvent;
 import com.forest.model.CustomerOrder;
-import com.forest.shipment.ejb.OrderBrowser;
 
 @Named
 @RequestScoped

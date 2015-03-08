@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.web;
+package com.forest.store.ui.controller;
 
 import java.util.ResourceBundle;
 
@@ -20,11 +20,11 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
-import com.forest.ejb.OrderDetailBean;
 import com.forest.model.OrderDetail;
-import com.forest.web.util.AbstractPaginationHelper;
-import com.forest.web.util.JsfUtil;
-import com.forest.web.util.PageNavigation;
+import com.forest.store.ui.util.AbstractPaginationHelper;
+import com.forest.store.ui.util.JsfUtil;
+import com.forest.store.ui.util.PageNavigation;
+import com.forest.store.wiring.ecommerce.OrderDetailBean;
 
 @Named(value = "orderDetailController")
 @RequestScoped
@@ -34,7 +34,7 @@ public class OrderDetailController {
 	private OrderDetail current;
 	private DataModel items = null;
 	@EJB
-	private com.forest.ejb.OrderDetailBean ejbFacade;
+	private com.forest.store.wiring.ecommerce.OrderDetailBean ejbFacade;
 	private AbstractPaginationHelper pagination;
 	private int selectedItemIndex;
 

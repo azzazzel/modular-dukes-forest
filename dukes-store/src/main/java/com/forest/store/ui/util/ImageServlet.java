@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.web.util;
+package com.forest.store.ui.util;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -21,8 +21,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.forest.ejb.ProductBean;
 import com.forest.model.Product;
+import com.forest.store.wiring.catalog.ProductBean;
 
 /**
  * Image servlet based on BalusC (@link below) implementation

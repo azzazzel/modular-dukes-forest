@@ -1,12 +1,12 @@
-package com.forest.persitence.jpa;
+package com.forest.persistence.jpa;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import com.forest.entity.OrderDetailEntity;
 import com.forest.model.OrderDetail;
 import com.forest.model.OrderDetailPK;
+import com.forest.persistence.entity.OrderDetailEntity;
 import com.forest.usecase.ecommerce.persistence.OrderDetailPersistence;
 
 public class OrderDetailPersistenceJPA extends

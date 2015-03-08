@@ -1,4 +1,4 @@
-package com.forest.persitence.jpa;
+package com.forest.persistence.jpa;
 
 import java.util.List;
 
@@ -7,9 +7,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import com.forest.entity.CategoryEntity;
-import com.forest.entity.ProductEntity;
 import com.forest.model.Product;
+import com.forest.persistence.entity.CategoryEntity;
+import com.forest.persistence.entity.ProductEntity;
 import com.forest.usecase.catalog.persistence.ProductPersistence;
 
 public class ProductPersistenceJPA extends AbstractBasePersistence<ProductEntity, Product> implements ProductPersistence {

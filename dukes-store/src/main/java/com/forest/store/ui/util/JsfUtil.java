@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.web.util;
+package com.forest.store.ui.util;
 
 import java.util.List;
 import java.util.ResourceBundle;

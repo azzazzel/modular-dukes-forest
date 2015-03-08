@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.handlers;
+package com.forest.store.wiring.ecommerce;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -26,9 +26,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.DatatypeConverter;
 
-import com.forest.ejb.OrderBean;
 import com.forest.events.OrderEvent;
-import com.forest.qualifiers.New;
+import com.forest.store.qualifiers.New;
 
 /**
  * CDI event handler that calls Payment service for new orders. It will

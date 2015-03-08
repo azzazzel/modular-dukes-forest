@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.ejb;
+package com.forest.store.ui.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,9 +26,11 @@ import com.forest.model.OrderDetail;
 import com.forest.model.OrderDetailPK;
 import com.forest.model.Person;
 import com.forest.model.Product;
-import com.forest.qualifiers.LoggedIn;
-import com.forest.web.util.JsfUtil;
-import com.forest.web.util.PageNavigation;
+import com.forest.store.qualifiers.LoggedIn;
+import com.forest.store.ui.util.JsfUtil;
+import com.forest.store.ui.util.PageNavigation;
+import com.forest.store.wiring.ecommerce.OrderBean;
+import com.forest.store.wiring.identity.UserBean;
 
 @Named(value = "shoppingCart")
 @ConversationScoped

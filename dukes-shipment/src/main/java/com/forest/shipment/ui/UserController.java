@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.shipment.web;
+package com.forest.shipment.ui;
 
 import java.io.Serializable;
 import java.util.logging.Level;
@@ -22,9 +22,8 @@ import javax.servlet.http.HttpSession;
 
 import com.forest.model.Group;
 import com.forest.model.Person;
-import com.forest.qualifiers.LoggedIn;
-import com.forest.shipment.session.UserBean;
-import com.forest.shipment.web.util.JsfUtil;
+import com.forest.shipment.qualifiers.LoggedIn;
+import com.forest.shipment.wiring.UserBean;
 
 /**
  * UserController is an authorization controller responsible 

@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package com.forest.shipment.ejb;
+package com.forest.shipment.wiring;
 
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
