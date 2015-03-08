@@ -8,6 +8,8 @@
 	</parent>
 	<artifactId>usecases-identity</artifactId>
 	<name>User Identity Usecases</name>
+	<packaging>bundle</packaging>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.glassfish.javaeetutorial</groupId>
@@ -15,4 +17,23 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.5.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Version>${project.version}</Bundle-Version>
+						<Export-Package>com.forest.usecase.identity*</Export-Package>
+						<Import-Package>*</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
