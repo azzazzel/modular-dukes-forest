@@ -73,6 +73,7 @@
 		<module>jee-apps</module>
 		<module>usecases</module>
 		<module>catalog-microservice</module>
+		<module>osgi</module>
 	</modules>
 
 
