@@ -28,5 +28,6 @@
 
 	<modules>
 		<module>catalog-service</module>
+		<module>catalog-commands</module>
 	</modules>
 </project>
