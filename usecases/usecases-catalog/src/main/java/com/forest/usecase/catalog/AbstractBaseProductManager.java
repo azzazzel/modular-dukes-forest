@@ -3,6 +3,7 @@ package com.forest.usecase.catalog;
 import java.util.List;
 
 import com.forest.model.Product;
+import com.forest.model.ProductList;
 import com.forest.usecase.catalog.persistence.ProductPersistence;
 
 public abstract class AbstractBaseProductManager implements ProductManager  {
@@ -74,4 +75,7 @@ public abstract class AbstractBaseProductManager implements ProductManager  {
     	return getProductPersistence().findRange(range);
     }
    
+	public ProductList getAsProductList () {
+		return ProductList.fromList(getAll());
+	}
 }

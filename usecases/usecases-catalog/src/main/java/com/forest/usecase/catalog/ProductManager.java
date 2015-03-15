@@ -3,6 +3,7 @@ package com.forest.usecase.catalog;
 import java.util.List;
 
 import com.forest.model.Product;
+import com.forest.model.ProductList;
 
 public interface ProductManager {
 
@@ -22,5 +23,7 @@ public interface ProductManager {
 	public abstract List<Product> getAll();
 
 	public abstract List<Product> getAllInRange(int... range);
+	
+	public ProductList getAsProductList ();
 
 }

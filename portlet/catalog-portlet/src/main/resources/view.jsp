@@ -1,9 +1,10 @@
 
+<%@page import="com.forest.model.ProductList"%>
 <%@ include file="/init.jsp" %>
 
 <%
 	ProductManager pm = (ProductManager)request.getAttribute("productManager");
-	List<Product> products = pm.getAll();
+	ProductList products = pm.getAsProductList();
 %>
 
 
